@@ -11,30 +11,29 @@
        --a11y-font-dyslexia: 'OpenDyslexic', sans-serif;
      }
 
-   Default typography follows the Modern Amusement design system (Bielefeld
-   design tokens): Bricolage Grotesque (200–800), base tracking −0.02em,
-   no uppercase transforms, no positive letter-spacing, spacing rhythm
-   4/8/12/16/20/24/32/48, radius catalog 8/12/20/24/9999.
+   Default typography follows the Modern Amusement brand: Alliance No.1
+   (Regular + Bold, self-hosted), base tracking −0.02em, no uppercase
+   transforms, no positive letter-spacing, spacing rhythm 4/8/12/16/20/24/32/48.
+   Layout language: hard vertical lines (see branding.svg) — the font-size
+   value sits between two vertical rules, toggle rows get a 4px left rule.
    ========================================================================== */
 
-/* Bricolage Grotesque — self-hosted variable font, SIL OFL 1.1
-   (fonts/bricolage-grotesque/OFL.txt) */
+/* Alliance No.1 — Modern Amusement brand font (self-hosted, proprietary,
+   not sub-licensed). Regular covers 100–600, Bold 700–900. */
 @font-face {
-	font-family: 'Bricolage Grotesque';
-	src: url('fonts/bricolage-grotesque/bricolage-latin.woff2') format('woff2');
-	font-weight: 200 800;
+	font-family: 'Alliance No.1';
+	src: url('fonts/alliance/AllianceNo1-Regular.woff2') format('woff2');
+	font-weight: 100 600;
 	font-style: normal;
 	font-display: swap;
-	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
-	font-family: 'Bricolage Grotesque';
-	src: url('fonts/bricolage-grotesque/bricolage-latin-ext.woff2') format('woff2');
-	font-weight: 200 800;
+	font-family: 'Alliance No.1';
+	src: url('fonts/alliance/AllianceNo1-Bold.woff2') format('woff2');
+	font-weight: 700 900;
 	font-style: normal;
 	font-display: swap;
-	unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
 :root {
@@ -70,8 +69,8 @@
 	--a11y-radius-sm: 0;
 	--a11y-shadow: 4px 4px 0 var(--a11y-text);
 
-	/* Fonts — Bricolage Grotesque (bundled, OFL) + mono for the size value */
-	--a11y-font-ui: 'Bricolage Grotesque', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	/* Fonts — Alliance No.1 (brand, bundled) + mono for the size value */
+	--a11y-font-ui: 'Alliance No.1', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 	--a11y-font-dyslexia: 'OpenDyslexic', 'Comic Sans MS', sans-serif;
 	--a11y-font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace;
 
@@ -306,6 +305,7 @@ html[data-a11y-position="right"] .a11y-toolbar {
 	transform: translate(2px, 2px);
 }
 
+/* Font-size value sits between two vertical rules (branding.svg layout) */
 .a11y-font-val {
 	flex: 1;
 	text-align: center;
@@ -314,6 +314,10 @@ html[data-a11y-position="right"] .a11y-toolbar {
 	font-family: var(--a11y-font-mono);
 	letter-spacing: -0.02em;
 	color: var(--a11y-text);
+	border-left: 2px solid var(--a11y-text);
+	border-right: 2px solid var(--a11y-text);
+	margin: 0 -1px;
+	padding: 0.15rem 0;
 }
 
 /* Toggles: line-separated rows with hard left accent (Bielefeld list rows) */

@@ -37,7 +37,7 @@
 })(typeof self !== 'undefined' ? self : this, function (root) {
 	'use strict';
 
-	var VERSION = '1.2.0';
+	var VERSION = '1.2.1';
 
 	var TOGGLE_IDS = [
 		'contrast',

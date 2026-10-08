@@ -3,6 +3,14 @@
 All notable changes to this project are documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.2.1] — 2026-10-09
+
+### Changed
+- Default UI font is now **Alliance No.1** (Modern Amusement brand font, self-hosted Regular + Bold; weighs 100–600 / 700–900) instead of Bricolage Grotesque — per user request (fonts from `MA_WEBSITE/public/fonts`).
+- Demo site: body/headings use Alliance No.1, brand logo added to the top navigation next to the wordmark (logo + vertical rule + wordmark + vertical rule + label), vertical divider in the navbar, vertical rule in the hero (per `branding.svg` layout).
+- Toolbar: the font-size value now sits between two vertical 2px rules (branding layout); toggle rows keep the 4px left accent.
+- `branding.svg` (root) documents the target layout; CONTEXT.md/LICENSing notes Alliance No.1 as proprietary MA brand font (not re-licenseable).
+
 ## [1.2.0] — 2026-10-08
 
 ### Added

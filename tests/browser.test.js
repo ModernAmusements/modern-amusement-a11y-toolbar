@@ -69,12 +69,14 @@ const { findChrome, createReporter, sleep } = require('./helpers');
 		await document.fonts.ready;
 		return {
 			family: getComputedStyle(document.querySelector('.a11y-title')).fontFamily,
-			loaded: document.fonts.check('16px "Bricolage Grotesque"'),
-			tracking: parseFloat(getComputedStyle(document.querySelector('.a11y-title')).letterSpacing)
+			loaded: document.fonts.check('16px "Alliance No.1"'),
+			tracking: parseFloat(getComputedStyle(document.querySelector('.a11y-title')).letterSpacing),
+			valBorders: [getComputedStyle(document.getElementById('a11y-font-size-val')).borderLeftWidth, getComputedStyle(document.getElementById('a11y-font-size-val')).borderRightWidth]
 		};
 	});
-	report.log('default UI font is Bricolage Grotesque', uiFont.family.includes('Bricolage Grotesque') && uiFont.loaded, uiFont.family);
+	report.log('default UI font is Alliance No.1 (brand)', uiFont.family.includes('Alliance No.1') && uiFont.loaded, uiFont.family);
 	report.log('Bielefeld typography tracking applied (negative em)', !isNaN(uiFont.tracking) && uiFont.tracking < 0, String(uiFont.tracking));
+	report.log('font value sits between vertical rules', uiFont.valBorders[0] === '2px' && uiFont.valBorders[1] === '2px', JSON.stringify(uiFont.valBorders));
 
 		const triggerText = await page.$eval('#a11y-trigger .a11y-trigger-label', (el) => el.textContent);
 		report.log('trigger text default EN', triggerText === 'Accessibility', triggerText);

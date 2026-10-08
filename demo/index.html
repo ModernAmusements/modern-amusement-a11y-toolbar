@@ -19,7 +19,7 @@
 	* { box-sizing: border-box; }
 	body {
 		margin: 0;
-		font-family: 'Bricolage Grotesque', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+		font-family: 'Alliance No.1', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 		font-size: 1rem;
 		line-height: 1.7;
 		letter-spacing: -0.02em;
@@ -34,8 +34,15 @@
 		gap: 12px;
 		padding: 18px 20px 0;
 	}
-	.demo-product img { height: 44px; width: auto; display: block; }
-	.demo-product span { font-size: .85rem; color: var(--demo-muted); font-weight: 500; }
+	.demo-product .demo-product-logo { height: 34px; width: auto; display: block; }
+	.demo-product .demo-product-wordmark { height: 34px; width: auto; display: block; }
+	.demo-product .demo-product-label { font-size: .85rem; color: var(--demo-muted); font-weight: 500; }
+	.demo-vline {
+		display: inline-block;
+		width: 2px;
+		align-self: stretch;
+		background: var(--demo-ink);
+	}
 
 	.demo-navbar {
 		width: min(1200px, calc(100% - 24px));
@@ -80,6 +87,7 @@
 		margin: 0 0 12px;
 	}
 	.demo-hero-text p { color: var(--demo-muted); font-size: 1rem; max-width: 58ch; margin: 0 0 12px; }
+	.demo-hero-rule { width: 2px; align-self: stretch; background: var(--demo-ink); flex-shrink: 0; }
 	.demo-hero-graphic { width: 50%; flex-shrink: 0; }
 	.demo-hero-graphic svg { width: 100%; height: auto; display: block; border: 2px solid var(--demo-ink); box-shadow: 6px 6px 0 var(--demo-ink); }
 
@@ -209,7 +217,9 @@
 	.cfg-note { font-size: .78rem; color: var(--demo-muted); margin-top: 14px; }
 	@media (max-width: 768px) {
 		.demo-hero { flex-direction: column; gap: 24px; }
+		.demo-hero-rule { display: none; }
 		.demo-hero-graphic { width: 100%; }
+		.demo-nav-divider { display: none; }
 	}
 	@media (max-width: 640px) {
 		.cfg-panel { width: 100%; max-width: 100%; }
@@ -228,8 +238,11 @@
 <body>
 
 <div class="demo-product">
-	<img src="../docs/ma_a11y-wordmark.svg" alt="Modern Amusement Accessibility Toolbar">
-	<span>Demo &amp; Config Playground</span>
+	<img class="demo-product-logo" src="../docs/ma_a11y-logo.svg" alt="Modern Amusement Accessibility Toolbar">
+	<span class="demo-vline" aria-hidden="true"></span>
+	<img class="demo-product-wordmark" src="../docs/ma_a11y-wordmark.svg" alt="">
+	<span class="demo-vline" aria-hidden="true"></span>
+	<span class="demo-product-label">Demo &amp; Config Playground</span>
 </div>
 
 <nav class="demo-navbar" aria-label="Demo navigation">
@@ -259,6 +272,7 @@
 				<a class="demo-btn" href="#testen">Toolbar testen</a>
 			</div>
 		</div>
+		<span class="demo-hero-rule" aria-hidden="true"></span>
 		<div class="demo-hero-graphic" aria-hidden="true">
 			<svg viewBox="0 0 760 440" xmlns="http://www.w3.org/2000/svg" role="img">
 				<rect width="760" height="440" fill="#f1ece8"/>
@@ -401,7 +415,7 @@
 	<div class="cfg-row">
 		<label for="c-font-ui">UI-Schrift</label>
 		<select id="c-font-ui">
-			<option value="'Bricolage Grotesque', system-ui, sans-serif" selected>Bricolage Grotesque (Bielefeld)</option>
+			<option value="'Alliance No.1', system-ui, sans-serif" selected>Alliance No.1 (Brand)</option>
 			<option value="">System (Standard)</option>
 			<option value="Georgia, 'Times New Roman', serif">Serif</option>
 			<option value="'Courier New', ui-monospace, monospace">Monospace</option>

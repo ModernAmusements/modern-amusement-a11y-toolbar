@@ -92,11 +92,11 @@ window.A11yToolbarConfig = {
 		radiusSm: '0px'
 	},
 
-	/* Fonts. Bricolage Grotesque (200–800, OFL) ships with the toolbar and is
-	   the default UI font; OpenDyslexic ships for the dyslexia toggle. Load
-	   any other webfont yourself (@font-face) and reference it here. */
+	/* Fonts. Alliance No.1 (Modern Amusement brand font, Regular + Bold)
+	   ships with the toolbar as the default UI font; OpenDyslexic ships for
+	   the dyslexia toggle. Load any other webfont yourself (@font-face). */
 	fonts: {
-		ui: '',        /* panel/settings font-family; empty = Bricolage Grotesque stack */
+		ui: '',        /* panel/settings font-family; empty = Alliance No.1 stack */
 		dyslexia: ''   /* dyslexia mode font-family; empty = OpenDyslexic stack */
 	},
 

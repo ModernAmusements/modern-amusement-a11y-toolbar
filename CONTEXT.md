@@ -2,7 +2,7 @@
 
 > **Single source of truth für dieses Produkt-Repo.** Immer zuerst lesen.
 > Stand: 2026-10-09 (Session-Ende, v1.2.0) · Nächste Aktualisierung nach jeder Session Pflicht.
-> Letzter Stand: Brutalist-Theme + Bielefeld-Layout-Primitives, Bricolage Grotesque (OFL), 89/89 Tests, CI grün. Commit `e99c8d0` (main).
+> Letzter Stand: v1.2.1 — Brutalist-Theme + Bielefeld-Layout-Primitives, Alliance No.1 (Brandfont), Logo in Nav, vertikale Linien (branding.svg), 89/89+, CI grün.
 
 ---
 
@@ -20,7 +20,7 @@
 ## 2. Struktur
 
 - `a11y-toolbar.js` — UMD-Library: Auto-Init (`A11yToolbarConfig`), JS-API (`init/destroy/open/close/getPrefs/setPrefs/reset/toggle`), Scope-Engine (same-origin iframes + open Shadow DOM via `adoptedStyleSheets`, CSP-safe), Font-Scaling auto (root/zoom), Base-Filter-Erhalt, Fokus-Trap, RTL-, Storage- & Edge-Case-Härtung.
-- `a11y-toolbar.css` — Default-Theme **minimal/brutalistisch**, alle Tokens als CSS-Vars (`--a11y-*`), self-hosted Bricolage Grotesque `@font-face` (OFL).
+- `a11y-toolbar.css` — Default-Theme **minimal/brutalistisch**, alle Tokens als CSS-Vars (`--a11y-*`), self-hosted Alliance No.1 `@font-face` (Markenfont).
 - `config.example.js` — Dokumentierte Beispiel-Konfiguration.
 - `demo/index.html` — Brutalist-Demo-Seite (Bielefeld-Layout-Primitives) + Config-Playground (Customizer, EN/DE-Labels).
 - `docs/` — `MA-A11Y-POSTER.png`, `ma_a11y-wordmark.svg`, `ma_a11y-logo.svg`, `favicon.svg`, Screenshots.
@@ -33,7 +33,7 @@
 
 1. **Farben (User):** Text `#4B1800`, Hintergrund `#F1ECE8`. Palette ergänzt aus dem Poster: Akzent `#754D3A`, Hover `#DCD1CB`, Rahmen `#C7B7AE`.
 2. **Layout:** Bielefeld-Primitives aus `Bielefeld_Scrape` (`agents/CSS_LAYOUT_AGENT.md`, `_vars.css`, `index.css`, `browser.css`): Section-Header (Badge-Pill + Titel + harte Unterlinie), Zeilen-Rows mit `4px`-Linksakzent, Grid-Stat-Karten, Tabellen mit Zeilenlinien, Floating-Nav, Hero-Side-by-Side. **Umsetzung minimal/brutalistisch: kein Glass, Radius 0 (nur Badge-Pill 99px), harte 2px-Linien, harte Offset-Schatten (Panel 8px, Controls 3px).**
-3. **Font:** **Bricolage Grotesque** (OFL, variabel 200–800, latin + latin-ext) als Default-UI-Font. ⚠️ NICHT die `Alliance No.1`-Dateien aus `Bielefeld_Scrape` verwenden — kein OFL-Nachweis, nicht für ein öffentliches Repo lizenziert. Typo-Tokens: tracking `-0.02em`, Title 600, Labels 600 mono-freie Kopfzeilen, `font-val` in Mono-Stack.
+3. **Font:** **Alliance No.1** (Markenfont Modern Amusement, selbst gehostet Regular + Bold aus `MA_WEBSITE/public/fonts`, Ordner `fonts/alliance/`) als Default-UI-Font — bewusst NICHT Bricolage und nicht die Bielefeld-`Alliance`-Kopien (kein OFL; MA-Font nur mit dieser Software, nicht weiterlizensierbar). Typo-Tokens: tracking `-0.02em`, Titel/Trigger 700, Labels 600, `font-val` Mono **zwischen zwei vertikalen Linien**; Layout-Sprache = hart vertikale Linien (Referenz `branding.svg` im Root).
 4. **White-Label:** kein Credit default (`credit: false`), alles konfigurierbar (`colors/fonts/position/labels/toggles/fontScale/scope/offset/zIndex`).
 5. **Scope-Engine:** Feature-Klassen in same-origin iframes + open Shadow DOM; `adoptedStyleSheets` (umgeht `style-src`-CSP), `attachShadow`-Patch + MutationObserver für dynamische Roots; Cleanup bei `destroy()`. **Cross-Origin-iframes & geschlossene Shadow Roots = Browser-Limit, dokumentiert** (nicht fixbar).
 6. **Font-Scaling:** `fontScale.mode` `auto|root|zoom` — rem-Seiten per Root-Font-Size, px-Seiten per CSS `zoom`; Bereich 80–200 % (WCAG 1.4.4).
@@ -46,7 +46,8 @@
 - **v1.0.0** (`d3984ab`): Scaffold, UMD-Library, themebare CSS, Dual-License, README EN, Demo.
 - **Tests/CI** (`e713d8b`, `6391397`): 5 Suiten, Chrome-Detection (`CHROME_PATH`, system Chrome, Puppeteer-Cache), GitHub Actions grün.
 - **v1.1.0** (`c72cb36`): px-Sites via Zoom, iframes + Shadow DOM, Base-Filter-Erhalt, `scope`-Option, Scope-Tests. → ALLE Integration-Caveats behoben bzw. dokumentiert.
-- **v1.2.0** (`e99c8d0`): **Brutalist-Theme** (User-Vorgabe: "minimal and brutalistik, hard vertical lines, no glass"), Bricolage-Grotesque-Bundle, Bielefeld-Layout-Umbau von Toolbar + Demo (nach komplettem CSS-Lesen von `Bielefeld_Scrape` + Explore-Agent-Report), Edge-Case-Suite, Poster/Wordmark/Logo/Favicon (User-Assets), README EN+DE.
+- **v1.2.0** (`e99c8d0`): **Brutalist-Theme** (User-Vorgabe: "minimal and brutalistik, hard vertical lines, no glass"), Bielefeld-Layout-Umbau von Toolbar + Demo, Edge-Case-Suite, Poster/Wordmark/Logo/Favicon (User-Assets), README EN+DE.
+- **v1.2.1** (ungecommittet Stand Session): Font-Swap auf **Alliance No.1** (aus `MA_WEBSITE/public/fonts`), Logo in der Demo-Navigation (Logo + vertikale Linie + Wordmark), vertikale Linien als Layout-Sprache (`branding.svg` im Root), `font-val` zwischen zwei vertikalen Rules, Tests aktualisiert.
 - Teststand: **config 7/7, browser 44/44, api 10/10, scope 15/15, edge 13/13 = 89/89**, CI success.
 
 ## 5. Offen / Nächste Schritte

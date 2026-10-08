@@ -126,7 +126,7 @@ Colors can be set in the JS config (`colors`) **or** as plain CSS custom propert
   --a11y-backdrop: rgba(0, 0, 0, 0.4);
   --a11y-radius: 12px;
   --a11y-radius-sm: 8px;
-  --a11y-font-ui: 'Bricolage Grotesque', system-ui, sans-serif;
+  --a11y-font-ui: 'Alliance No.1', system-ui, sans-serif;
   --a11y-font-dyslexia: 'OpenDyslexic', sans-serif;
   --a11y-z: 2147483000;
   --a11y-side: 1.5rem;
@@ -149,7 +149,7 @@ For a custom font, load it yourself (`@font-face` or a font service) and point `
 The shipped default theme follows the Modern Amusement design tokens (Bielefeld):
 
 - **Colors — warm brown:** solid background `#F1ECE8`, text `#4B1800`, accent `#754D3A`, hover `#DCD1CB`, borders `#C7B7AE`.
-- **Typography — Bricolage Grotesque** (self-hosted variable font, SIL OFL 1.1, weights 200–800): base `1rem` / line-height `1.5` / tracking `-0.02em`; titles `600`, badges and labels `600`, buttons `500`; the font-size value renders in a mono stack. No uppercase transforms, no positive letter-spacing, `-webkit-font-smoothing: antialiased`.
+- **Typography — Alliance No.1** (Modern Amusement brand font, self-hosted Regular + Bold): base `1rem` / line-height `1.5` / tracking `-0.02em`; titles and trigger `700`, badges and labels `600`, buttons `500`; the font-size value renders in a mono stack between two vertical rules (see `branding.svg`). No uppercase transforms, no positive letter-spacing, `-webkit-font-smoothing: antialiased`.
 - **Layout — Bielefeld primitives, rendered minimal/brutalist:** a section header (badge pill + title) with a hard `2px` bottom line (`.content-section-header` pattern), font-size controls as square `2px`-outlined buttons, the 13 toggles as **line-separated rows** with a hard `4px` left accent when active, a full-width reset button, hard 2px panel outline and hard offset shadows (`8px 8px` panel, `3px 3px` controls). No glass, no rounded corners (badge pill `99px` is the only radius by default; both radius variables are configurable).
 - **Spacing rhythm:** 4/8/12/16/20/24/32/48.
 
@@ -371,7 +371,7 @@ Farben lassen sich in der JS-Konfiguration (`colors`) **oder** als reine CSS-Cus
   --a11y-backdrop: rgba(0, 0, 0, 0.4);
   --a11y-radius: 12px;
   --a11y-radius-sm: 8px;
-  --a11y-font-ui: 'Bricolage Grotesque', system-ui, sans-serif;
+  --a11y-font-ui: 'Alliance No.1', system-ui, sans-serif;
   --a11y-font-dyslexia: 'OpenDyslexic', sans-serif;
   --a11y-z: 2147483000;
   --a11y-side: 1.5rem;
@@ -394,7 +394,7 @@ Für eine eigene Schrift diese selbst laden (`@font-face` oder Font-Dienst) und 
 Das ausgelieferte Standard-Theme folgt den Modern-Amusement-Design-Tokens (Bielefeld):
 
 - **Farben — warmes Braun:** solide Fläche `#F1ECE8`, Text `#4B1800`, Akzent `#754D3A`, Hover `#DCD1CB`, Rahmen `#C7B7AE`.
-- **Typografie — Bricolage Grotesque** (selbst gehostete Variable Font, SIL OFL 1.1, Schnitte 200–800): Basis `1rem` / Zeilenhöhe `1.5` / Laufweite `-0.02em`; Titel `600`, Badges und Labels `600`, Buttons `500`; der Schriftgrößen-Wert rendert in einem Mono-Stack. Keine Uppercase-Transforms, keine positive Laufweite, `-webkit-font-smoothing: antialiased`.
+- **Typografie — Alliance No.1** (Modern-Amusement-Markenfont, selbst gehostet Regular + Bold): Basis `1rem` / Zeilenhöhe `1.5` / Laufweite `-0.02em`; Titel und Trigger `700`, Badges und Labels `600`, Buttons `500`; der Schriftgrößen-Wert rendert in einem Mono-Stack zwischen zwei vertikalen Linien (siehe `branding.svg`). Keine Uppercase-Transforms, keine positive Laufweite, `-webkit-font-smoothing: antialiased`.
 - **Layout — Bielefeld-Primitives, minimal/brutalistisch umgesetzt:** Sektions-Header (Badge-Pill + Titel) mit harter `2px`-Unterlinie (`.content-section-header`-Muster), Schriftgrößen-Controls als eckige Buttons mit `2px`-Outline, die 13 Toggles als **zeilengetrennte Rows** mit hartem `4px`-Linksakzent im aktiven Zustand, full-width Reset-Button, harte `2px`-Panel-Kontur und harte Offset-Schatten (`8px 8px` Panel, `3px 3px` Controls). Kein Glass, keine Rundungen (nur die Badge-Pill `99px` als Standard-Radius; beide Radius-Variablen sind konfigurierbar).
 - **Abstands-Rhythmus:** 4/8/12/16/20/24/32/48.
 
