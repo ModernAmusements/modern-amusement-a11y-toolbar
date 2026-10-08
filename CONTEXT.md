@@ -27,6 +27,7 @@
 - `fonts/` — `bricolage-grotesque/` + `opendyslexic/` (beide SIL OFL 1.1, je `OFL.txt`).
 - `tests/` — 5 Suiten + `static-server.js`, `helpers.js`, `fixtures/`.
 - `.github/workflows/tests.yml` — CI (npm test, Chrome for Testing via `@puppeteer/browsers`).
+- `opencode.json` + `.opencode/agents/` — lokale OpenCode-Agents (aus dem Modern-Amusement-Pool kopiert, **gitignored** über `.opencode/` — niemals committen). Registriert: webdev-expert (primary), seo/accessibility/performance/security/qa/devops/content/ux/projektmanagement/site-rebuilder/wcag/lottie.
 
 ## 3. Design-Entscheidungen (fixiert)
 

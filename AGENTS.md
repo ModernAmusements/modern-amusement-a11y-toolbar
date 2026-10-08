@@ -40,3 +40,7 @@ CHROME_PATH=... npm test # falls Chrome nicht automatisch gefunden wird
 5. Nach Theme-/Markup-Änderungen `tests/browser.test.js` prüfen UND Screenshots (`docs/`) neu generieren (Puppeteer-Muster).
 6. Repo ist **public**: niemals Credentials committen; nur OFL/permissiv lizenzierte Fonts/Assets einbinden.
 7. Commits englisch, conventional-style, nur wenn vom User beauftragt.
+
+## Agents
+
+Lokale OpenCode-Agents liegen in `.opencode/agents/` (kopiert aus dem Modern-Amusement-Pool, u. a. `webdev-expert`, `accessibility-auditor`, `wcag-auditor`, `qa-tester`, `ux-designer`, `performance-engineer`, `security-hardener`) und sind über `opencode.json` registriert. Sie sind **gitignored** (`.opencode/`) — nie committen, nur lokal verwenden. Falls die prompt-Registrierung neu gesetzt werden muss: `opencode.json` zeigt auf `{file:.opencode/agents/<name>.md}`.

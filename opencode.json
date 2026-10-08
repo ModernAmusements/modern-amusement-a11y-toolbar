@@ -1,0 +1,30 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "agent": {
+    "webdev-expert": {
+      "mode": "primary",
+      "prompt": "{file:.opencode/agents/webdev-expert.md}",
+      "permission": {
+        "read": "allow",
+        "edit": "allow",
+        "bash": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "webfetch": "allow",
+        "task": "allow"
+      }
+    },
+    "seo-specialist": { "mode": "subagent", "prompt": "{file:.opencode/agents/seo-specialist.md}" },
+    "accessibility-auditor": { "mode": "subagent", "prompt": "{file:.opencode/agents/accessibility-auditor.md}" },
+    "performance-engineer": { "mode": "subagent", "prompt": "{file:.opencode/agents/performance-engineer.md}" },
+    "security-hardener": { "mode": "subagent", "prompt": "{file:.opencode/agents/security-hardener.md}" },
+    "qa-tester": { "mode": "subagent", "prompt": "{file:.opencode/agents/qa-tester.md}" },
+    "devops-pipeline": { "mode": "subagent", "prompt": "{file:.opencode/agents/devops-pipeline.md}" },
+    "content-strategist": { "mode": "subagent", "prompt": "{file:.opencode/agents/content-strategist.md}" },
+    "ux-designer": { "mode": "subagent", "prompt": "{file:.opencode/agents/ux-designer.md}" },
+    "projektmanagement": { "mode": "subagent", "prompt": "{file:.opencode/agents/projektmanagement.md}" },
+    "site-rebuilder": { "mode": "subagent", "prompt": "{file:.opencode/agents/site-rebuilder.md}" },
+    "wcag-auditor": { "mode": "subagent", "prompt": "{file:.opencode/agents/wcag-auditor.md}" },
+    "lottie-animator": { "mode": "subagent", "prompt": "{file:.opencode/agents/lottie-animator.md}" }
+  }
+}
