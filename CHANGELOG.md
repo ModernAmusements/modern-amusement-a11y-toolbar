@@ -15,3 +15,5 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Auto-init, manual JS API (`init`, `destroy`, `open`, `close`, `getPrefs`, `setPrefs`, `reset`, `toggle`).
 - Bundled self-hosted OpenDyslexic font (SIL OFL 1.1) with optional CSS.
 - Demo page / live config playground.
+- Test suite: Node smoke test, full browser UI suite and API suite (Puppeteer), plus a GitHub Actions workflow that runs them on every push and pull request.
+- Bilingual README (English / German).

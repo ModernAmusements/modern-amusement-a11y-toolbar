@@ -27,7 +27,14 @@
 		"LICENSE"
 	],
 	"scripts": {
-		"demo": "npx --yes serve ."
+		"demo": "npx --yes serve .",
+		"test": "node tests/config.test.js && node tests/browser.test.js && node tests/api.test.js",
+		"test:config": "node tests/config.test.js",
+		"test:browser": "node tests/browser.test.js",
+		"test:api": "node tests/api.test.js"
+	},
+	"devDependencies": {
+		"puppeteer-core": "^25.1.0"
 	},
 	"repository": {
 		"type": "git",
