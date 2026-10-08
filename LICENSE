@@ -1,0 +1,52 @@
+Modern Amusement Accessibility Toolbar
+Copyright (c) 2026 Shady Tawfik (Modern Amusement) — https://modern-amusement.dev/de
+
+DUAL LICENSE
+============
+
+This software is released under a dual license. Choose the option that
+applies to you.
+
+1. NON-PROFIT LICENSE (free of charge)
+--------------------------------------
+
+Permission is hereby granted, free of charge, to any registered non-profit
+organization, charity, foundation, public-interest organization, public
+educational institution or public-sector body (each a "Non-Profit"), to use,
+copy, modify, merge, publish, distribute and sublicense this software and its
+documentation (the "Software") for the Non-Profit's own charitable,
+educational or public-interest purposes, subject to the following conditions:
+
+  a) The Software is not used for commercial advantage or monetary
+     compensation beyond the Non-Profit's own mission-related activities.
+  b) The above copyright notice and this license shall be included in all
+     copies or substantial portions of the Software.
+  c) Modified versions must be clearly marked as modified and must not use
+     the "Modern Amusement" name or logo without prior written permission.
+
+2. COMMERCIAL LICENSE (paid)
+----------------------------
+
+Any use that does not qualify as a Non-Profit use under section 1 —
+including, without limitation, use by or for a company, agency, freelancer,
+for-profit organization, or use in a commercial product or paid service —
+requires a commercial license. For licensing and pricing, contact:
+
+  https://modern-amusement.dev/de
+
+3. WARRANTY
+-----------
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+IN THE SOFTWARE.
+
+4. THIRD-PARTY ASSETS
+---------------------
+
+The bundled OpenDyslexic font is licensed separately under the SIL Open Font
+License 1.1 — see fonts/opendyslexic/OFL.txt.

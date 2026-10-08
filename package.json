@@ -1,0 +1,36 @@
+{
+	"name": "modern-amusement-a11y-toolbar",
+	"version": "1.0.0",
+	"description": "Dependency-free, white-label accessibility toolbar for any website. 13 accessibility toggles, font scaling, full color and font theming. Free for non-profit organizations.",
+	"keywords": [
+		"accessibility",
+		"a11y",
+		"toolbar",
+		"wcag",
+		"white-label",
+		"dyslexia",
+		"contrast",
+		"vanilla-js"
+	],
+	"license": "SEE LICENSE IN LICENSE",
+	"author": "Shady Tawfik — Modern Amusement (https://modern-amusement.dev/de)",
+	"homepage": "https://modern-amusement.dev/de",
+	"main": "a11y-toolbar.js",
+	"style": "a11y-toolbar.css",
+	"files": [
+		"a11y-toolbar.js",
+		"a11y-toolbar.css",
+		"config.example.js",
+		"fonts",
+		"README.md",
+		"CHANGELOG.md",
+		"LICENSE"
+	],
+	"scripts": {
+		"demo": "npx --yes serve ."
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ModernAmusements/modern-amusement-a11y-toolbar.git"
+	}
+}

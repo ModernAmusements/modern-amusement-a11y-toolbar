@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modern Amusement Accessibility Toolbar — Demo &amp; Config Playground</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../a11y-toolbar.css">
+<link rel="stylesheet" href="../fonts/opendyslexic/opendyslexic.css">
+<style>
+	/* ---------- demo page only ---------- */
+	:root {
+		--demo-ink: #1d2433;
+		--demo-muted: #5a6472;
+		--demo-line: #e3e6ea;
+		--demo-brand: #0a7d55;
+		--demo-surface: #ffffff;
+	}
+	* { box-sizing: border-box; }
+	body {
+		margin: 0;
+		font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+		color: var(--demo-ink);
+		background: #f6f7f9;
+		line-height: 1.6;
+	}
+	.demo-site { max-width: 760px; margin: 0 auto; padding: 0 20px 120px; }
+	.demo-header {
+		background: var(--demo-brand);
+		color: #fff;
+		padding: 18px 20px;
+	}
+	.demo-header-inner { max-width: 760px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+	.demo-logo { font-weight: 800; letter-spacing: .02em; }
+	.demo-logo span { opacity: .75; font-weight: 500; }
+	.demo-nav a { color: #fff; margin-left: 14px; font-size: .9rem; }
+	.demo-hero { padding: 42px 0 10px; }
+	.demo-hero h1 { font-size: clamp(1.7rem, 4vw, 2.5rem); line-height: 1.15; margin: 0 0 12px; }
+	.demo-hero p { color: var(--demo-muted); font-size: 1.05rem; max-width: 58ch; }
+	.demo-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 8px; }
+	.demo-btn {
+		display: inline-block; padding: 10px 18px; border-radius: 8px; text-decoration: none;
+		font-weight: 600; border: 2px solid var(--demo-brand); color: var(--demo-brand); background: transparent;
+	}
+	.demo-btn--solid { background: var(--demo-brand); color: #fff; }
+	h2 { margin-top: 40px; font-size: 1.4rem; }
+	.demo-card {
+		background: var(--demo-surface); border: 1px solid var(--demo-line); border-radius: 10px;
+		padding: 18px 20px; margin: 14px 0;
+	}
+	.demo-card--dark { background: #1d2433; color: #f4f5f7; border-color: #1d2433; }
+	.demo-card--dark a { color: #9ee6c6; }
+	.demo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+	.demo-img { width: 100%; height: auto; border-radius: 8px; display: block; }
+	table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: .92rem; }
+	th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--demo-line); }
+	.demo-note { font-size: .85rem; color: var(--demo-muted); }
+	.demo-footer { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--demo-line); font-size: .85rem; color: var(--demo-muted); }
+
+	/* ---------- customizer ---------- */
+	.cfg-toggle {
+		position: fixed; top: 14px; right: 14px; z-index: 120000;
+		border: 0; border-radius: 8px; padding: 10px 14px; cursor: pointer;
+		background: #1d2433; color: #fff; font-weight: 600; font-size: .85rem;
+		box-shadow: 0 6px 18px rgba(0,0,0,.18);
+	}
+	.cfg-panel {
+		position: fixed; top: 0; right: 0; bottom: 0; width: 340px; max-width: 92vw;
+		background: #fff; border-left: 1px solid var(--demo-line); z-index: 119999;
+		overflow-y: auto; padding: 64px 18px 26px; transform: translateX(105%);
+		transition: transform .28s ease; box-shadow: -10px 0 34px rgba(0,0,0,.12);
+	}
+	.cfg-panel.is-open { transform: translateX(0); }
+	.cfg-panel h2 { margin: 0 0 4px; font-size: 1.1rem; }
+	.cfg-panel h3 { margin: 22px 0 8px; font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--demo-muted); }
+	.cfg-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 7px 0; font-size: .88rem; }
+	.cfg-row label { flex: 1; }
+	.cfg-row input[type="color"] { width: 42px; height: 28px; border: 1px solid var(--demo-line); border-radius: 6px; padding: 1px; background: #fff; }
+	.cfg-row input[type="text"], .cfg-row select {
+		width: 150px; padding: 6px 8px; border: 1px solid var(--demo-line); border-radius: 6px; font: inherit; font-size: .85rem;
+	}
+	.cfg-checks { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; font-size: .82rem; }
+	.cfg-checks label { display: flex; gap: 6px; align-items: center; }
+	.cfg-actions { display: flex; gap: 8px; margin-top: 18px; }
+	.cfg-actions button {
+		flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--demo-line);
+		background: #f3f4f6; cursor: pointer; font-weight: 600; font-size: .85rem;
+	}
+	.cfg-actions button.primary { background: var(--demo-brand); border-color: var(--demo-brand); color: #fff; }
+	.cfg-json {
+		margin-top: 14px; background: #0f172a; color: #c7f5e2; border-radius: 8px; padding: 12px;
+		font-size: .72rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word; max-height: 260px; overflow: auto;
+	}
+	.cfg-note { font-size: .78rem; color: var(--demo-muted); margin-top: 14px; }
+	@media (max-width: 640px) {
+		.cfg-panel { width: 100%; max-width: 100%; }
+	}
+</style>
+<script>
+	/* Config passed to the toolbar before it loads. */
+	window.A11yToolbarConfig = {
+		position: 'left',
+		colors: { accent: '#0a7d55' },
+		credit: false
+	};
+</script>
+<script src="../a11y-toolbar.js" defer></script>
+</head>
+<body>
+
+<header class="demo-header">
+	<div class="demo-header-inner">
+		<div class="demo-logo">Musterverein e.V. <span>· Demo</span></div>
+		<nav class="demo-nav">
+			<a href="#angebote">Angebote</a>
+			<a href="#kontakt">Kontakt</a>
+		</nav>
+	</div>
+</header>
+
+<main class="demo-site">
+	<section class="demo-hero">
+		<h1>Gemeinsam für eine barrierefreie Stadt</h1>
+		<p>
+			Diese Demo zeigt die <strong>Modern Amusement Accessibility Toolbar</strong> auf einer
+			typischen Non-Profit-Website. Öffne die Toolbar unten links und probiere alle 13
+			Funktionen aus. Mit dem Customizer (oben rechts) kannst du Farben, Schriften,
+			Position und Sprache live anpassen — ideal für White-Label-Einsätze.
+		</p>
+		<div class="demo-actions">
+			<a class="demo-btn demo-btn--solid" href="#angebote">Unsere Angebote</a>
+			<a class="demo-btn" href="#kontakt">Kontakt aufnehmen</a>
+		</div>
+	</section>
+
+	<h2 id="angebote">Unsere Angebote</h2>
+	<div class="demo-grid">
+		<div class="demo-card">
+			<h3>Beratung</h3>
+			<p>Kostenlose und vertrauliche Beratung für alle Menschen in unserer Stadt.</p>
+			<a href="#kontakt">Mehr erfahren</a>
+		</div>
+		<div class="demo-card">
+			<h3>Bildung</h3>
+			<p>Kurse, Workshops und Sprachangebote für Jung und Alt.</p>
+			<a href="#kontakt">Mehr erfahren</a>
+		</div>
+		<div class="demo-card">
+			<h3>Begegnung</h3>
+			<p>Offene Treffs, Feste und Projekte, die Menschen zusammenbringen.</p>
+			<a href="#kontakt">Mehr erfahren</a>
+		</div>
+	</div>
+
+	<h2>Barrierefreiheit testen</h2>
+	<p>
+		Alle Funktionen wirken direkt auf diese Demo-Seite: <a href="#angebote">Links</a>,
+		Überschriften, Formulare und Bilder. So siehst du sofort, wie sich
+		<strong>Hoher Kontrast</strong>, <strong>Dunkles Design</strong> oder die
+		<strong>Dyslexie-freundliche Schrift</strong> auf deine Inhalte auswirken.
+	</p>
+
+	<div class="demo-card demo-card--dark">
+		<h3>Sektion mit dunklem Hintergrund</h3>
+		<p>Diese Fläche prüft die Kontrast- und Invert-Modi auf dunklen Designs. <a href="#kontakt">Kontakt</a></p>
+	</div>
+
+	<h2>Bild</h2>
+	<img class="demo-img" alt="Illustration: Gemeinschaft" width="760" height="220"
+		src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 760 220'%3E%3Crect width='760' height='220' fill='%230a7d55'/%3E%3Ccircle cx='140' cy='110' r='62' fill='%23ffd54f'/%3E%3Ccircle cx='300' cy='80' r='38' fill='%239ee6c6'/%3E%3Crect x='400' y='60' width='240' height='100' rx='14' fill='%23ffffff' opacity='.92'/%3E%3Crect x='430' y='90' width='180' height='12' rx='6' fill='%231d2433'/%3E%3Crect x='430' y='116' width='120' height='12' rx='6' fill='%231d2433' opacity='.55'/%3E%3C/svg%3E">
+
+	<h2>Formular</h2>
+	<form class="demo-card" action="#" onsubmit="return false">
+		<p>
+			<label>Name<br><input type="text" name="name" placeholder="Vor- und Nachname" style="padding:8px 10px;border:1px solid #e3e6ea;border-radius:6px;width:100%;max-width:320px"></label>
+		</p>
+		<p>
+			<label>Nachricht<br><textarea name="msg" rows="3" placeholder="Deine Nachricht" style="padding:8px 10px;border:1px solid #e3e6ea;border-radius:6px;width:100%;max-width:420px"></textarea></label>
+		</p>
+		<p><button class="demo-btn demo-btn--solid" type="submit">Absenden</button></p>
+	</form>
+
+	<h2 id="kontakt">Kontakt</h2>
+	<table>
+		<tr><th>Angebot</th><th>Zeit</th><th>Ort</th></tr>
+		<tr><td>Offener Treff</td><td>Montag, 15–18 Uhr</td><td>Musterstraße 1</td></tr>
+		<tr><td>Sprachcafé</td><td>Mittwoch, 10–12 Uhr</td><td>Musterstraße 3</td></tr>
+		<tr><td>Beratung</td><td>Donnerstag, 14–17 Uhr</td><td>Musterstraße 1</td></tr>
+	</table>
+
+	<footer class="demo-footer">
+		<p>
+			Demo der <strong>Modern Amusement Accessibility Toolbar</strong> · White-Label · frei für gemeinnützige Organisationen.<br>
+			<a href="https://modern-amusement.dev/de" target="_blank" rel="noopener noreferrer">modern-amusement.dev</a>
+		</p>
+	</footer>
+</main>
+
+<!-- ------------------------------------------------------------------ -->
+<!-- Config player                                                        -->
+<!-- ------------------------------------------------------------------ -->
+<button class="cfg-toggle" id="cfg-toggle" type="button" aria-expanded="false" aria-controls="cfg-panel">⚙ Customize</button>
+
+<aside class="cfg-panel" id="cfg-panel" aria-label="Toolbar configuration">
+	<h2>Toolbar Customizer</h2>
+	<p class="cfg-note">Ändere Werte und klicke <strong>Apply</strong> — die Toolbar startet mit der neuen Konfiguration neu.</p>
+
+	<h3>Farben</h3>
+	<div class="cfg-row"><label for="c-accent">Akzent</label><input type="color" id="c-accent" value="#0a7d55"></div>
+	<div class="cfg-row"><label for="c-surface">Fläche</label><input type="color" id="c-surface" value="#ffffff"></div>
+	<div class="cfg-row"><label for="c-text">Text</label><input type="color" id="c-text" value="#1a1a1a"></div>
+	<div class="cfg-row"><label for="c-border">Rahmen</label><input type="color" id="c-border" value="#e2e2e2"></div>
+	<div class="cfg-row"><label for="c-highlight">Highlight</label><input type="color" id="c-highlight" value="#ffff00"></div>
+
+	<h3>Schriften</h3>
+	<div class="cfg-row">
+		<label for="c-font-ui">UI-Schrift</label>
+		<select id="c-font-ui">
+			<option value="">System (Standard)</option>
+			<option value="Georgia, 'Times New Roman', serif">Serif</option>
+			<option value="'Courier New', ui-monospace, monospace">Monospace</option>
+			<option value="'OpenDyslexic', sans-serif">OpenDyslexic</option>
+		</select>
+	</div>
+	<div class="cfg-row"><label for="c-font-dyslexia">Dyslexie-Schrift</label><input type="text" id="c-font-dyslexia" placeholder="'OpenDyslexic', sans-serif"></div>
+
+	<h3>Verhalten</h3>
+	<div class="cfg-row">
+		<label for="c-position">Position</label>
+		<select id="c-position"><option value="left">Links</option><option value="right">Rechts</option></select>
+	</div>
+	<div class="cfg-row">
+		<label for="c-language">Sprache</label>
+		<select id="c-language"><option value="en">English</option><option value="de" selected>Deutsch</option></select>
+	</div>
+	<div class="cfg-row">
+		<label for="c-credit">Credit anzeigen</label>
+		<input type="checkbox" id="c-credit">
+	</div>
+	<div class="cfg-row"><label for="c-credit-name">Credit-Name</label><input type="text" id="c-credit-name" placeholder="Musterverein e.V."></div>
+
+	<h3>Funktionen</h3>
+	<div class="cfg-checks" id="c-toggles"></div>
+
+	<div class="cfg-actions">
+		<button class="primary" id="cfg-apply" type="button">Apply</button>
+		<button id="cfg-reset" type="button">Reset</button>
+	</div>
+	<pre class="cfg-json" id="cfg-json" aria-label="Aktuelle Konfiguration"></pre>
+</aside>
+
+<script>
+(function () {
+	'use strict';
+
+	var TOGGLE_IDS = ['contrast','invert','grayscale','underlineLinks','highlightLinks','highlightHeadings','letterSpacing','lineHeight','focusRing','bigCursor','readingGuide','pauseAnimations','dyslexiaFont'];
+
+	var LABELS_EN = {
+		open: 'Open accessibility', triggerText: 'Accessibility', title: 'Accessibility', close: 'Close',
+		fontSize: 'Font size', fontDecrease: 'Decrease font size', fontIncrease: 'Increase font size',
+		reset: 'Reset', resetAria: 'Reset all settings', credit: 'Developed by',
+		toggles: {
+			contrast: 'High contrast', invert: 'Dark mode', grayscale: 'Remove colors',
+			underlineLinks: 'Underline links', highlightLinks: 'Highlight links', highlightHeadings: 'Highlight headings',
+			letterSpacing: 'More letter spacing', lineHeight: 'More line height', focusRing: 'Strong focus outline',
+			bigCursor: 'Big cursor', readingGuide: 'Reading guide', pauseAnimations: 'Pause animations',
+			dyslexiaFont: 'Dyslexia-friendly font'
+		}
+	};
+	var LABELS_DE = {
+		open: 'Barrierefreiheit öffnen', triggerText: 'Barrierefreiheit', title: 'Barrierefreiheit', close: 'Schließen',
+		fontSize: 'Schriftgröße', fontDecrease: 'Schrift verkleinern', fontIncrease: 'Schrift vergrößern',
+		reset: 'Zurücksetzen', resetAria: 'Alle Einstellungen zurücksetzen', credit: 'Entwickelt von',
+		toggles: {
+			contrast: 'Hoher Kontrast', invert: 'Dunkles Design', grayscale: 'Farben entfernen',
+			underlineLinks: 'Links unterstreichen', highlightLinks: 'Links hervorheben', highlightHeadings: 'Überschriften markieren',
+			letterSpacing: 'Mehr Buchstabenabstand', lineHeight: 'Größerer Zeilenabstand', focusRing: 'Deutlicher Fokusrahmen',
+			bigCursor: 'Große Mauszeiger', readingGuide: 'Lesehilfe (Zeilenmarker)', pauseAnimations: 'Animationen stoppen',
+			dyslexiaFont: 'Dyslexie-freundliche Schrift'
+		}
+	};
+	var TOGGLE_LABELS = {
+		contrast: 'Kontrast', invert: 'Dunkel', grayscale: 'Graustufen', underlineLinks: 'Links unterstrichen',
+		highlightLinks: 'Links markiert', highlightHeadings: 'Überschriften', letterSpacing: 'Buchstabenabstand',
+		lineHeight: 'Zeilenabstand', focusRing: 'Fokusrahmen', bigCursor: 'Großer Cursor',
+		readingGuide: 'Lesehilfe', pauseAnimations: 'Animationen', dyslexiaFont: 'Dyslexie-Schrift'
+	};
+
+	var panel = document.getElementById('cfg-panel');
+	var toggleBtn = document.getElementById('cfg-toggle');
+	var jsonOut = document.getElementById('cfg-json');
+	var togglesWrap = document.getElementById('c-toggles');
+
+	/* Build the toggle checkboxes. */
+	TOGGLE_IDS.forEach(function (id) {
+		var label = document.createElement('label');
+		var input = document.createElement('input');
+		input.type = 'checkbox';
+		input.checked = true;
+		input.dataset.toggleId = id;
+		label.appendChild(input);
+		label.appendChild(document.createTextNode(TOGGLE_LABELS[id]));
+		togglesWrap.appendChild(label);
+	});
+
+	toggleBtn.addEventListener('click', function () {
+		var open = panel.classList.toggle('is-open');
+		toggleBtn.setAttribute('aria-expanded', String(open));
+	});
+
+	function val(id) { return document.getElementById(id).value; }
+	function checked(id) { return document.getElementById(id).checked; }
+
+	function buildConfig() {
+		var lang = val('c-language');
+		var enabledToggles = TOGGLE_IDS.filter(function (id) {
+			return togglesWrap.querySelector('input[data-toggle-id="' + id + '"]').checked;
+		});
+
+		var config = {
+			position: val('c-position'),
+			toggles: enabledToggles,
+			labels: lang === 'de' ? LABELS_DE : LABELS_EN,
+			colors: {
+				accent: val('c-accent'),
+				surface: val('c-surface'),
+				text: val('c-text'),
+				border: val('c-border'),
+				highlight: val('c-highlight')
+			},
+			credit: checked('c-credit') ? {
+				text: lang === 'de' ? 'Entwickelt von' : 'Developed by',
+				name: val('c-credit-name') || 'Musterverein e.V.',
+				url: 'https://example.org'
+			} : false
+		};
+
+		var uiFont = val('c-font-ui');
+		var dyslexiaFont = val('c-font-dyslexia').trim();
+		config.fonts = {};
+		if (uiFont) config.fonts.ui = uiFont;
+		if (dyslexiaFont) config.fonts.dyslexia = dyslexiaFont;
+
+		return config;
+	}
+
+	function applyConfig() {
+		var config = buildConfig();
+		jsonOut.textContent = JSON.stringify(config, null, 2);
+		if (!window.A11yToolbar) return;
+		window.A11yToolbar.destroy();
+		window.A11yToolbar.init(config);
+	}
+
+	document.getElementById('cfg-apply').addEventListener('click', applyConfig);
+	document.getElementById('cfg-reset').addEventListener('click', function () {
+		try { localStorage.removeItem('a11y_toolbar_prefs'); } catch (e) {}
+		location.reload();
+	});
+
+	/* First render of the JSON preview. */
+	window.addEventListener('DOMContentLoaded', function () {
+		setTimeout(function () {
+			jsonOut.textContent = JSON.stringify(buildConfig(), null, 2);
+		}, 0);
+	});
+})();
+</script>
+</body>
+</html>
