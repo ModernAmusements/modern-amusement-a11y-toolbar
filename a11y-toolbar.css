@@ -53,10 +53,14 @@
 	--a11y-contrast-link-hover: #551a8b;
 
 	/* Layout (usually set by JS from `offset` / `zIndex` config) */
-	--a11y-z: 99998;
+	--a11y-z: 2147483000;
 	--a11y-side: 1.5rem;
 	--a11y-trigger-bottom: 1.5rem;
 	--a11y-panel-bottom: 5.5rem;
+
+	/* Set by JS when the page itself uses a CSS filter on <html> and
+	   invert/grayscale is enabled, so the site filter is preserved. */
+	--a11y-base-filter: ;
 }
 
 /* --------------------------------------------------------------------------
@@ -331,9 +335,12 @@ html.a11y-contrast body :is(a, button, input, textarea, select):not(#a11y-toolba
 	outline-offset: 2px;
 }
 
-/* 2. Dark / inverted theme */
+/* 2. Dark / inverted theme.
+   The root filter also covers iframe boxes and shadow DOM content.
+   --a11y-base-filter composes in the site's own <html> filter when one
+   exists (set by JS, see captureBaseFilter in a11y-toolbar.js). */
 html.a11y-invert {
-	filter: invert(1) hue-rotate(180deg);
+	filter: var(--a11y-base-filter,) invert(1) hue-rotate(180deg);
 	background: #000;
 }
 
@@ -346,9 +353,9 @@ html.a11y-invert .a11y-trigger {
 	filter: invert(1) hue-rotate(180deg);
 }
 
-/* 3. Grayscale */
+/* 3. Grayscale (site's own root filter is preserved, see above) */
 html.a11y-grayscale {
-	filter: grayscale(1);
+	filter: var(--a11y-base-filter,) grayscale(1);
 }
 
 html.a11y-grayscale body :is(img, picture, video):not(#a11y-toolbar *):not(#a11y-trigger *) {

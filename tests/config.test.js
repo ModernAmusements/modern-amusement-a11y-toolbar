@@ -8,7 +8,9 @@
  */
 
 const assert = require('assert');
+const fs = require('fs');
 const path = require('path');
+const vm = require('vm');
 
 const A11yToolbar = require(path.join(__dirname, '..', 'a11y-toolbar.js'));
 const pkg = require(path.join(__dirname, '..', 'package.json'));
@@ -58,6 +60,19 @@ check('package files list includes distributables', () => {
 	['a11y-toolbar.js', 'a11y-toolbar.css', 'LICENSE'].forEach((file) => {
 		assert.ok(pkg.files.indexOf(file) !== -1 || file === 'LICENSE', 'missing in package.json files: ' + file);
 	});
+});
+
+check('config.example.js is valid and complete', () => {
+	const source = fs.readFileSync(path.join(__dirname, '..', 'config.example.js'), 'utf8');
+	const sandbox = { window: {} };
+	vm.runInNewContext(source, sandbox);
+	const config = sandbox.window.A11yToolbarConfig;
+	assert.ok(config && typeof config === 'object', 'no A11yToolbarConfig exported');
+	assert.strictEqual(config.toggles.length, 13, 'expected 13 toggles');
+	assert.strictEqual(config.fontScale.max, 200, 'expected 200% max font scale');
+	assert.strictEqual(config.fontScale.mode, 'auto', 'expected auto font scale mode');
+	assert.ok(config.scope && config.scope.iframes === true && config.scope.shadowDom === true, 'expected scope defaults');
+	assert.ok(typeof config.colors.accent === 'string', 'expected accent color');
 });
 
 console.log('\nconfig: ' + passed + '/' + (passed + failed) + ' checks passed');

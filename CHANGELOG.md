@@ -3,6 +3,17 @@
 All notable changes to this project are documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.1.0] — 2026-10-08
+
+### Added
+- Font scaling `mode` option (`auto` | `root` | `zoom`): px-based sites now scale via CSS zoom, rem/em-based sites via root font-size. `auto` detects the site's approach. Default `max` raised to 200% (WCAG 1.4.4).
+- `scope` option: visual modes now propagate to same-origin iframes and open Shadow DOM roots (`scope: { iframes, shadowDom }`, both default `true`).
+- Root filter preservation: a site's own CSS filter on `<html>` is captured and composed with invert/grayscale instead of being replaced.
+- New tests: `tests/scope.test.js` (zoom mode, iframe and Shadow DOM propagation, base-filter composition).
+
+### Changed
+- Default `zIndex` raised from `99998` to `2147483000` so the toolbar reliably sits above page overlays; still fully configurable.
+
 ## [1.0.0] — 2026-10-08
 
 ### Added

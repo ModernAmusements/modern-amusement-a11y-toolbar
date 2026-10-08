@@ -76,16 +76,18 @@ const { findChrome, createReporter, sleep } = require('./helpers');
 		await page.evaluate(() => window.A11yToolbar.setPrefs({ fontScale: 120, invert: true }));
 		const setPrefs = await page.evaluate(() => ({
 			size: document.documentElement.style.fontSize,
+			zoom: document.documentElement.style.zoom,
 			invert: document.documentElement.classList.contains('a11y-invert')
 		}));
-		report.log('API setPrefs applies values', setPrefs.size === '120%' && setPrefs.invert === true, JSON.stringify(setPrefs));
+		report.log('API setPrefs applies values', (setPrefs.size === '120%' || setPrefs.zoom === '1.2') && setPrefs.invert === true, JSON.stringify(setPrefs));
 
 		await page.evaluate(() => window.A11yToolbar.reset());
 		const resetPrefs = await page.evaluate(() => ({
 			size: document.documentElement.style.fontSize,
+			zoom: document.documentElement.style.zoom,
 			invert: document.documentElement.classList.contains('a11y-invert')
 		}));
-		report.log('API reset restores defaults', resetPrefs.size === '100%' && resetPrefs.invert === false, JSON.stringify(resetPrefs));
+		report.log('API reset restores defaults', (resetPrefs.size === '100%' || (resetPrefs.size === '' && resetPrefs.zoom === '')) && resetPrefs.invert === false, JSON.stringify(resetPrefs));
 
 		/* destroy cleanup */
 		await page.evaluate(() => window.A11yToolbar.destroy());

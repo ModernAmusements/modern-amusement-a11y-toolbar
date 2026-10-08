@@ -1,6 +1,6 @@
 {
 	"name": "modern-amusement-a11y-toolbar",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "Dependency-free, white-label accessibility toolbar for any website. 13 accessibility toggles, font scaling, full color and font theming. Free for non-profit organizations.",
 	"keywords": [
 		"accessibility",
@@ -28,10 +28,11 @@
 	],
 	"scripts": {
 		"demo": "npx --yes serve .",
-		"test": "node tests/config.test.js && node tests/browser.test.js && node tests/api.test.js",
+		"test": "node tests/config.test.js && node tests/browser.test.js && node tests/api.test.js && node tests/scope.test.js",
 		"test:config": "node tests/config.test.js",
 		"test:browser": "node tests/browser.test.js",
-		"test:api": "node tests/api.test.js"
+		"test:api": "node tests/api.test.js",
+		"test:scope": "node tests/scope.test.js"
 	},
 	"devDependencies": {
 		"puppeteer-core": "^25.1.0"

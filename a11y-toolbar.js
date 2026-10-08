@@ -8,6 +8,9 @@
  * - White-label: no branding by default; optional "credit" block
  * - Persists preferences in localStorage
  * - Desktop panel + mobile bottom sheet, keyboard and screen-reader aware
+ * - Same-origin iframes and open Shadow DOM are covered
+ * - Font scaling works on rem- and px-based sites (auto mode)
+ * - Preserves a site's own root CSS filter when inverting/grayscaling
  *
  * Quick start:
  *   <link rel="stylesheet" href="a11y-toolbar.css">
@@ -20,7 +23,7 @@
  * License: free for non-profit organizations; commercial use requires a
  * commercial license. See LICENSE.
  *
- * @version 1.0.0
+ * @version 1.1.0
  * @author  Shady Tawfik — Modern Amusement — https://modern-amusement.dev/de
  */
 (function (root, factory) {
@@ -34,7 +37,7 @@
 })(typeof self !== 'undefined' ? self : this, function (root) {
 	'use strict';
 
-	var VERSION = '1.0.0';
+	var VERSION = '1.1.0';
 
 	var TOGGLE_IDS = [
 		'contrast',
@@ -141,7 +144,8 @@
 		'--a11y-z',
 		'--a11y-side',
 		'--a11y-trigger-bottom',
-		'--a11y-panel-bottom'
+		'--a11y-panel-bottom',
+		'--a11y-base-filter'
 	];
 
 	/* ----------------------------------------------------------------
@@ -237,11 +241,12 @@
 			autoInit: true,
 			storageKey: 'a11y_toolbar_prefs',
 			position: 'left',
-			zIndex: 99998,
+			zIndex: 2147483000,
 			trigger: null,
 			credit: false,
 			toggles: TOGGLE_IDS.slice(),
-			fontScale: { step: 10, min: 80, max: 150, start: 100 },
+			fontScale: { step: 10, min: 80, max: 200, start: 100, mode: 'auto' },
+			scope: { iframes: true, shadowDom: true },
 			colors: {},
 			fonts: {},
 			offset: { side: '1.5rem', triggerBottom: '1.5rem', panelBottom: '5.5rem' },
@@ -263,6 +268,13 @@
 		config.fontScale.min = clamp(config.fontScale.min, 40, 200);
 		config.fontScale.max = clamp(config.fontScale.max, config.fontScale.min, 300);
 		config.fontScale.step = clamp(config.fontScale.step, 1, 100);
+		if (config.fontScale.mode !== 'root' && config.fontScale.mode !== 'zoom') {
+			config.fontScale.mode = 'auto';
+		}
+
+		if (!isPlainObject(config.scope)) config.scope = {};
+		config.scope.iframes = config.scope.iframes !== false;
+		config.scope.shadowDom = config.scope.shadowDom !== false;
 
 		return config;
 	}
@@ -337,6 +349,305 @@
 			if (Object.prototype.hasOwnProperty.call(FONT_VARS, key)) root.style.removeProperty(FONT_VARS[key]);
 		}
 		LAYOUT_VARS.forEach(function (name) { root.style.removeProperty(name); });
+	}
+
+	/* ----------------------------------------------------------------
+	 * Scope support: same-origin iframes + open Shadow DOM, font-scale
+	 * mode (root font-size vs CSS zoom) and preservation of a site's
+	 * own root filter.
+	 * ---------------------------------------------------------------- */
+
+	var CURSOR_URI = 'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><path d="M5 2l22 13-10 2-4 8z" fill="black" stroke="white" stroke-width="2"/></svg>\') 4 2, auto';
+
+	/* Condensed feature CSS injected into same-origin iframe documents
+	   (selector: html) and open shadow roots (selector: :host-context(html)).
+	   Invert and grayscale are intentionally not repeated: the root filter of
+	   the top document already covers iframe boxes and shadow content. */
+	function scopeCss(kind) {
+		function s(cls) {
+			return kind === 'shadow' ? ':host-context(html.' + cls + ')' : 'html.' + cls;
+		}
+		var headings = [s('a11y-highlight-headings') + ' h1'].concat(
+			['h2', 'h3', 'h4', 'h5', 'h6'].map(function (h) { return s('a11y-highlight-headings') + ' ' + h; })
+		).join(', ');
+		var spacing = [s('a11y-letter-spacing') + ' body'].concat(
+			['p', 'li', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].map(function (t) { return s('a11y-letter-spacing') + ' ' + t; })
+		).join(', ');
+		var lines = [s('a11y-line-height') + ' body'].concat(
+			['p', 'li', 'span'].map(function (t) { return s('a11y-line-height') + ' ' + t; })
+		).join(', ');
+		var dyslexic = [s('a11y-dyslexia') + ' body',
+			s('a11y-dyslexia') + ' *:not(svg):not(svg *)'].join(', ');
+
+		return [
+			s('a11y-contrast') + ' *:not(style) { background-color: transparent !important; background-image: none !important; color: #000000 !important; border-color: #000000 !important; box-shadow: none !important; text-shadow: none !important; }',
+			s('a11y-contrast') + ' a { color: #0000ee !important; text-decoration: underline !important; }',
+			s('a11y-contrast') + ' img { border: 1px solid #000000 !important; }',
+			s('a11y-underline-links') + ' a { text-decoration: underline !important; text-underline-offset: 3px; }',
+			s('a11y-highlight-links') + ' a { background-color: #ffff00 !important; color: #000000 !important; text-decoration: underline !important; }',
+			headings + ' { background-color: #ffff00 !important; color: #000000 !important; box-shadow: 0 0 0 4px #ffff00 !important; }',
+			spacing + ' { letter-spacing: 0.12em !important; }',
+			lines + ' { line-height: 1.9 !important; }',
+			s('a11y-focus-ring') + ' :is(a, button, input, textarea, select, summary, [tabindex]) { outline: 3px solid #0000ee !important; outline-offset: 3px !important; }',
+			s('a11y-big-cursor') + ' * { cursor: ' + CURSOR_URI + ' !important; }',
+			s('a11y-no-animation') + ' * { animation-duration: 0.001s !important; animation-iteration-count: 1 !important; transition-duration: 0.001s !important; scroll-behavior: auto !important; }',
+			dyslexic + ' { font-family: var(--a11y-font-dyslexia, "OpenDyslexic", sans-serif) !important; }'
+		].join('\n');
+	}
+
+	function getScopeSheet(doc, kind) {
+		var map = state.scopeSheets[kind];
+		if (!map) return null;
+		var sheet = map.get(doc);
+		if (sheet) return sheet;
+		var win = doc.defaultView || root;
+		if (typeof win.CSSStyleSheet !== 'function') return null;
+		try {
+			sheet = new win.CSSStyleSheet();
+			sheet.replaceSync(state.scopeCss[kind]);
+		} catch (e) {
+			return null;
+		}
+		map.set(doc, sheet);
+		state.createdSheets.push(sheet);
+		return sheet;
+	}
+
+	function isOurSheet(sheet) {
+		return state.createdSheets.indexOf(sheet) !== -1;
+	}
+
+	/* Prefer constructed stylesheets (adoptedStyleSheets): they are not
+	   subject to the style-src CSP of the target document. Fall back to a
+	   <style> element where the CSSStyleSheet constructor is unavailable. */
+	function injectScopeStyles(target, kind) {
+		try {
+			var isDocument = target.nodeType === 9;
+			var doc = isDocument ? target : (target.ownerDocument || document);
+			var sheet = getScopeSheet(doc, kind);
+			if (sheet) {
+				var adopted = null;
+				try { adopted = target.adoptedStyleSheets; } catch (e) { adopted = null; }
+				if (adopted && typeof adopted.indexOf === 'function') {
+					if (adopted.indexOf(sheet) === -1) {
+						target.adoptedStyleSheets = adopted.concat([sheet]);
+					}
+					return;
+				}
+			}
+			var host = isDocument ? (target.head || target.documentElement) : target;
+			if (!host || typeof host.appendChild !== 'function') return;
+			if (typeof target.querySelector === 'function' && target.querySelector('style[data-a11y-injected]')) return;
+			var style = doc.createElement('style');
+			style.setAttribute('data-a11y-injected', '');
+			style.textContent = state.scopeCss[kind];
+			host.appendChild(style);
+		} catch (e) { /* cross-origin or detached node - ignore */ }
+	}
+
+	function removeScopeStyles(target) {
+		try {
+			var adopted = target.adoptedStyleSheets;
+			if (adopted && adopted.length) {
+				var filtered = [];
+				for (var i = 0; i < adopted.length; i++) {
+					if (!isOurSheet(adopted[i])) filtered.push(adopted[i]);
+				}
+				if (filtered.length !== adopted.length) target.adoptedStyleSheets = filtered;
+			}
+		} catch (e) { /* ignore */ }
+		try {
+			var injected = target.querySelector && target.querySelector('style[data-a11y-injected]');
+			if (injected && injected.parentNode) injected.parentNode.removeChild(injected);
+		} catch (e) { /* ignore */ }
+	}
+
+	function syncFrame(frame) {
+		if (!state || !state.config.scope.iframes) return;
+		try {
+			var doc = frame.contentDocument;
+			if (!doc || !doc.documentElement) return;
+			injectScopeStyles(doc, 'frame');
+			var rootEl = doc.documentElement;
+			TOGGLE_IDS.forEach(function (id) {
+				var def = TOGGLE_DEFS[id];
+				if (def && id !== 'readingGuide') rootEl.classList.toggle(def.cls, !!state.prefs[id]);
+			});
+			applyFontScaleTo(rootEl);
+			if (state.config.fonts && state.config.fonts.dyslexia) {
+				rootEl.style.setProperty('--a11y-font-dyslexia', state.config.fonts.dyslexia);
+			}
+		} catch (e) { /* cross-origin frame - cannot be styled by design */ }
+	}
+
+	function syncFrames() {
+		if (!state || !state.config.scope.iframes) return;
+		var frames = document.querySelectorAll('iframe');
+		for (var i = 0; i < frames.length; i++) syncFrame(frames[i]);
+	}
+
+	function cleanupFrame(frame) {
+		try {
+			var doc = frame.contentDocument;
+			if (!doc || !doc.documentElement) return;
+			var rootEl = doc.documentElement;
+			TOGGLE_IDS.forEach(function (id) {
+				var def = TOGGLE_DEFS[id];
+				if (def && id !== 'readingGuide') rootEl.classList.remove(def.cls);
+			});
+			rootEl.style.fontSize = '';
+			rootEl.style.zoom = '';
+			removeScopeStyles(doc);
+		} catch (e) { /* ignore */ }
+	}
+
+	function processShadowRoot(shadowRoot) {
+		if (!state || !state.config.scope.shadowDom) return;
+		if (!shadowRoot || shadowRoot.nodeType !== 11) return;
+		injectScopeStyles(shadowRoot, 'shadow');
+	}
+
+	function forEachShadowRoot(callback) {
+		function walk(scope) {
+			if (!scope || typeof scope.querySelectorAll !== 'function') return;
+			var els = scope.querySelectorAll('*');
+			for (var i = 0; i < els.length; i++) {
+				var shadowRoot = els[i].shadowRoot;
+				if (shadowRoot) {
+					callback(shadowRoot);
+					walk(shadowRoot);
+				}
+			}
+		}
+		walk(document);
+	}
+
+	function scanNodeForScopes(node) {
+		if (!state || !node) return;
+		if (node.nodeType === 1) {
+			if (state.config.scope.shadowDom && node.shadowRoot) processShadowRoot(node.shadowRoot);
+			if (state.config.scope.iframes && node.tagName === 'IFRAME') syncFrame(node);
+		}
+		if (typeof node.querySelectorAll !== 'function') return;
+		var els = node.querySelectorAll('*');
+		for (var i = 0; i < els.length; i++) {
+			var el = els[i];
+			if (state.config.scope.shadowDom && el.shadowRoot) processShadowRoot(el.shadowRoot);
+			if (state.config.scope.iframes && el.tagName === 'IFRAME') syncFrame(el);
+		}
+	}
+
+	function scheduleScopeScan(nodes) {
+		if (!state) return;
+		for (var i = 0; i < nodes.length; i++) state.pendingNodes.push(nodes[i]);
+		if (state.scanScheduled) return;
+		state.scanScheduled = true;
+		root.setTimeout(function () {
+			if (!state) return;
+			state.scanScheduled = false;
+			var pending = state.pendingNodes.splice(0, state.pendingNodes.length);
+			for (var j = 0; j < pending.length; j++) scanNodeForScopes(pending[j]);
+		}, 120);
+	}
+
+	function startScopeObserver() {
+		if (!state.config.scope.shadowDom && !state.config.scope.iframes) return;
+		if (typeof root.MutationObserver !== 'function') return;
+		state.observer = new root.MutationObserver(function (mutations) {
+			var added = [];
+			for (var i = 0; i < mutations.length; i++) {
+				var nodes = mutations[i].addedNodes;
+				for (var j = 0; j < nodes.length; j++) added.push(nodes[j]);
+			}
+			if (added.length) scheduleScopeScan(added);
+		});
+		state.observer.observe(document.documentElement, { childList: true, subtree: true });
+	}
+
+	function patchAttachShadow() {
+		if (!state.config.scope.shadowDom) return;
+		var proto = root.Element && root.Element.prototype;
+		if (!proto || typeof proto.attachShadow !== 'function') return;
+		var original = proto.attachShadow;
+		var wrapper = function (init) {
+			var shadowRoot = original.apply(this, arguments);
+			if (init && init.mode === 'open' && state && state.config.scope.shadowDom) {
+				try { processShadowRoot(shadowRoot); } catch (e) { /* ignore */ }
+			}
+			return shadowRoot;
+		};
+		state.bound.attachShadowOriginal = original;
+		state.bound.attachShadowWrapper = wrapper;
+		proto.attachShadow = wrapper;
+	}
+
+	function unpatchAttachShadow() {
+		var proto = root.Element && root.Element.prototype;
+		if (!proto || !state.bound.attachShadowOriginal || !state.bound.attachShadowWrapper) return;
+		if (proto.attachShadow === state.bound.attachShadowWrapper) {
+			proto.attachShadow = state.bound.attachShadowOriginal;
+		}
+	}
+
+	/* Font scaling: root font-size for rem/em-based sites, CSS zoom for
+	   px-based sites (auto-detected), configurable via fontScale.mode. */
+	function detectFontScaleMode() {
+		var configured = state.config.fontScale.mode;
+		if (configured === 'root' || configured === 'zoom') return configured;
+
+		var probes = document.querySelectorAll('p, li, a, span, h1, h2, h3, h4, h5, h6, button, td, label, blockquote');
+		var sample = [];
+		for (var i = 0; i < probes.length && sample.length < 12; i++) {
+			var candidate = probes[i];
+			if (candidate.closest && candidate.closest('#a11y-toolbar, .a11y-trigger')) continue;
+			sample.push(candidate);
+		}
+		if (!sample.length) return 'root';
+
+		var before = [];
+		for (i = 0; i < sample.length; i++) before.push(root.getComputedStyle(sample[i]).fontSize);
+
+		var rootEl = document.documentElement;
+		var prev = rootEl.style.fontSize;
+		rootEl.style.fontSize = '110%';
+		void rootEl.offsetWidth;
+
+		var changed = false;
+		for (i = 0; i < sample.length; i++) {
+			if (root.getComputedStyle(sample[i]).fontSize !== before[i]) { changed = true; break; }
+		}
+		rootEl.style.fontSize = prev;
+
+		return changed ? 'root' : 'zoom';
+	}
+
+	function applyFontScaleTo(targetRoot) {
+		var scale = state.prefs.fontScale;
+		if (state.fontScaleMode === 'zoom') {
+			targetRoot.style.fontSize = '';
+			targetRoot.style.zoom = scale === 100 ? '' : String(scale / 100);
+		} else {
+			targetRoot.style.zoom = '';
+			targetRoot.style.fontSize = scale + '%';
+		}
+	}
+
+	/* Preserve a site's own filter on <html> when invert/grayscale is active:
+	   the site's computed filter is captured while no toolbar filter is
+	   applied and composed in via --a11y-base-filter. */
+	function captureBaseFilter() {
+		if (!state) return;
+		var current = root.getComputedStyle(document.documentElement).filter;
+		state.baseFilter = (current && current !== 'none') ? current : null;
+	}
+
+	function syncBaseFilter() {
+		var rootEl = document.documentElement;
+		if ((state.prefs.invert || state.prefs.grayscale) && state.baseFilter) {
+			rootEl.style.setProperty('--a11y-base-filter', state.baseFilter);
+		} else {
+			rootEl.style.removeProperty('--a11y-base-filter');
+		}
 	}
 
 	/* ----------------------------------------------------------------
@@ -557,22 +868,25 @@
 
 	function applyPrefs() {
 		var prefs = state.prefs;
-		var root = document.documentElement;
+		var rootEl = document.documentElement;
 		var buttons = state.nodes.toggleButtons || {};
 
-		root.style.fontSize = prefs.fontScale + '%';
+		applyFontScaleTo(rootEl);
+		syncBaseFilter();
 
 		TOGGLE_IDS.forEach(function (id) {
 			var def = TOGGLE_DEFS[id];
 			if (id === 'readingGuide') {
 				if (state.nodes.guide) state.nodes.guide.classList.toggle('is-active', !!prefs[id]);
 			} else if (def) {
-				root.classList.toggle(def.cls, !!prefs[id]);
+				rootEl.classList.toggle(def.cls, !!prefs[id]);
 			}
 			if (buttons[id]) buttons[id].setAttribute('aria-pressed', String(!!prefs[id]));
 		});
 
 		if (state.nodes.fontVal) state.nodes.fontVal.textContent = prefs.fontScale + '%';
+
+		syncFrames();
 
 		if (typeof state.config.onChange === 'function') {
 			state.config.onChange(getPrefs());
@@ -581,7 +895,11 @@
 
 	function togglePref(id) {
 		if (!state || !TOGGLE_DEFS[id]) return;
+		var filterWasActive = state.prefs.invert || state.prefs.grayscale;
 		var next = !state.prefs[id];
+		if (next && !filterWasActive && (id === 'invert' || id === 'grayscale')) {
+			captureBaseFilter();
+		}
 		state.prefs[id] = next;
 		if (next && TOGGLE_DEFS[id].exclusive) {
 			state.prefs[TOGGLE_DEFS[id].exclusive] = false;
@@ -641,14 +959,35 @@
 			config: config,
 			prefs: null,
 			nodes: {},
-			bound: {}
+			bound: {},
+			baseFilter: null,
+			fontScaleMode: 'root',
+			scopeCss: { frame: scopeCss('frame'), shadow: scopeCss('shadow') },
+			scopeSheets: {
+				frame: (typeof WeakMap === 'function') ? new WeakMap() : null,
+				shadow: (typeof WeakMap === 'function') ? new WeakMap() : null
+			},
+			createdSheets: [],
+			pendingNodes: [],
+			scanScheduled: false,
+			observer: null
 		};
 		applyTheme(config);
 		buildTrigger();
 		buildPanel();
 		buildReadingGuide();
 		state.prefs = loadPrefs();
+		captureBaseFilter();
+		state.fontScaleMode = detectFontScaleMode();
 		applyPrefs();
+		patchAttachShadow();
+		startScopeObserver();
+		forEachShadowRoot(processShadowRoot);
+		state.bound.frameLoad = function (e) {
+			var target = e.target;
+			if (target && target.tagName === 'IFRAME') syncFrame(target);
+		};
+		document.addEventListener('load', state.bound.frameLoad, true);
 		return api;
 	}
 
@@ -659,12 +998,23 @@
 		var nodes = state.nodes;
 		var config = state.config;
 
+		if (state.observer) state.observer.disconnect();
+		if (bound.frameLoad) document.removeEventListener('load', bound.frameLoad, true);
+		unpatchAttachShadow();
+
+		if (config.scope.iframes) {
+			var frames = document.querySelectorAll('iframe');
+			for (var f = 0; f < frames.length; f++) cleanupFrame(frames[f]);
+		}
+		forEachShadowRoot(removeScopeStyles);
+
 		TOGGLE_IDS.forEach(function (id) {
 			var def = TOGGLE_DEFS[id];
 			if (def && id !== 'readingGuide') root.classList.remove(def.cls);
 		});
 		document.body.classList.remove('a11y-sheet-open');
 		root.style.fontSize = '';
+		root.style.zoom = '';
 		root.removeAttribute('data-a11y-position');
 		removeTheme();
 
@@ -707,12 +1057,15 @@
 	function setPrefs(partial) {
 		if (!state || !isPlainObject(partial)) return api;
 		var prefs = state.prefs;
+		var filterWasActive = prefs.invert || prefs.grayscale;
 		TOGGLE_IDS.forEach(function (id) {
 			if (typeof partial[id] === 'boolean') prefs[id] = partial[id];
 		});
 		if (typeof partial.fontScale === 'number') {
 			prefs.fontScale = clamp(partial.fontScale, state.config.fontScale.min, state.config.fontScale.max);
 		}
+		if (prefs.invert && prefs.grayscale) prefs.grayscale = false;
+		if (!filterWasActive && (prefs.invert || prefs.grayscale)) captureBaseFilter();
 		savePrefs();
 		applyPrefs();
 		return api;

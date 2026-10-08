@@ -19,6 +19,7 @@ Many accessibility overlays cost non-profits money every month, phone home, or c
 - **White-label** — no branding by default, all labels and colors are yours.
 - **Themeable** — colors, fonts, position, radius, labels, and which tools appear are all configurable.
 - **Accessible itself** — keyboard operable, ARIA states, focus management, mobile bottom sheet, reduced-motion aware.
+- **Works everywhere** — same-origin iframes and open Shadow DOM are covered, font scaling adapts to px- and rem-based sites, and a site's own root filter is preserved.
 
 ## Features
 
@@ -41,6 +42,8 @@ Many accessibility overlays cost non-profits money every month, phone home, or c
 | Reset | Restores all defaults |
 
 Preferences are stored in `localStorage` (key configurable) and applied before first paint on return visits.
+
+The visual modes also reach same-origin iframes and open Shadow DOM. For the exact scope and the limits set by browser security, see [Integration & compatibility](#integration--compatibility).
 
 ## Quick start
 
@@ -86,11 +89,12 @@ Every key is optional. Full example: [`config.example.js`](config.example.js).
 | `autoInit` | boolean | `true` | Auto-init on DOM ready when `window.A11yToolbarConfig` is set |
 | `storageKey` | string | `'a11y_toolbar_prefs'` | localStorage key |
 | `position` | `'left' \| 'right'` | `'left'` | Docking side of trigger and panel |
-| `zIndex` | number | `99998` | Base z-index (trigger +1, backdrop -1) |
+| `zIndex` | number | `2147483000` | Base z-index (trigger +1, backdrop -1); near the CSS maximum so the toolbar stays above page overlays |
 | `trigger` | selector/element | `null` | Use an existing element instead of the generated button |
 | `credit` | object/false | `false` | Optional attribution `{ text, name, url, logo }` |
 | `toggles` | string[] | all 13 | Which tools to show, in order |
-| `fontScale` | object | `{ step: 10, min: 80, max: 150, start: 100 }` | Font scaling |
+| `fontScale` | object | `{ step: 10, min: 80, max: 200, start: 100, mode: 'auto' }` | Font scaling; `mode` is `auto` \| `root` \| `zoom` (see below) |
+| `scope` | object | `{ iframes: true, shadowDom: true }` | Propagate visual modes to same-origin iframes and open shadow roots |
 | `colors` | object | — | See [Theming](#theming) |
 | `fonts` | object | — | `ui` and `dyslexia` font-family strings |
 | `offset` | object | `{ side: '1.5rem', triggerBottom: '1.5rem', panelBottom: '5.5rem' }` | Spacing |
@@ -122,7 +126,7 @@ Colors can be set in the JS config (`colors`) **or** as plain CSS custom propert
   --a11y-radius-sm: 8px;
   --a11y-font-ui: 'Inter', system-ui, sans-serif;
   --a11y-font-dyslexia: 'OpenDyslexic', sans-serif;
-  --a11y-z: 99998;
+  --a11y-z: 2147483000;
   --a11y-side: 1.5rem;
   --a11y-trigger-bottom: 1.5rem;
   --a11y-panel-bottom: 5.5rem;
@@ -133,6 +137,8 @@ Colors can be set in the JS config (`colors`) **or** as plain CSS custom propert
   --a11y-contrast-link-hover: #551a8b;
 }
 ```
+
+`--a11y-base-filter` is set automatically when the page itself uses a CSS `filter` on `<html>` and invert/grayscale is active, so the site filter is preserved.
 
 For a custom font, load it yourself (`@font-face` or a font service) and point `fonts.ui` / `fonts.dyslexia` (or the CSS variables) at it.
 
@@ -187,7 +193,19 @@ A full German label set is in [`config.example.js`](config.example.js).
 
 ## Browser support
 
-Chrome/Edge, Firefox, Safari (current and previous major versions), iOS Safari, Android Chrome. Uses `localStorage`, CSS custom properties, `:is()`/`:not(selector list)` and inline SVG — no polyfills needed for any supported browser. Without JavaScript the toolbar simply doesn't render; content remains fully accessible.
+Chrome/Edge, Firefox, Safari (current and previous major versions), iOS Safari, Android Chrome. Uses `localStorage`, CSS custom properties, `:is()`/`:not(selector list)`, constructed stylesheets (with a `<style>` fallback) and inline SVG. Shadow DOM support uses `:host-context()` (Firefox 120+); older Firefox simply leaves shadow roots untouched. Without JavaScript the toolbar doesn't render; content remains fully accessible.
+
+## Integration & compatibility
+
+- **Any website**: static HTML, WordPress (or any CMS), Shopify, site builders, SPAs. Include the two files directly, or inject them via Google Tag Manager.
+- **Font scaling**: `fontScale.mode: 'auto'` applies a root font-size on rem/em-based sites and switches to CSS `zoom` on px-based sites — text scales either way. Default range up to 200% (WCAG 1.4.4).
+- **Same-origin iframes**: visual modes propagate automatically (feature classes + constructed stylesheet) and are cleaned up on `destroy()`.
+- **Open Shadow DOM**: styles are injected via `adoptedStyleSheets` (patched `attachShadow` + MutationObserver covers pre-existing and dynamically created roots).
+- **Strict CSP**: the toolbar itself only needs `script-src` and `style-src` entries for its two files. Embedded styles use constructed stylesheets instead of inline `<style>` tags, so iframe and Shadow DOM support works even under a strict `style-src` policy.
+- **Site root filters**: a `filter` the page itself sets on `<html>` is captured and composed with invert/grayscale instead of being overwritten.
+- **Z-index**: default `2147483000` (configurable) keeps the toolbar above page overlays and modals.
+- **Inline `!important` styles**: feature modes override ordinary inline styles and CSS-in-JS values. Inline declarations marked `!important` are a browser-level exception that no client-side tool can override.
+- **Known hard limits**: closed shadow roots and cross-origin iframes cannot be styled — that is a browser security boundary, not a limitation of this toolbar.
 
 ## Accessibility notes
 
@@ -204,9 +222,10 @@ npm install
 npm test
 ```
 
-- `tests/config.test.js` — Node smoke test: module import without a DOM, API surface, version sync with `package.json`.
+- `tests/config.test.js` — Node smoke test: module import without a DOM, API surface, version sync with `package.json`, example config validity.
 - `tests/browser.test.js` — full UI suite in real Chrome: all 13 tools, contrast/invert/grayscale behavior, theming, persistence, reset, Escape, focus, mobile bottom sheet, config playground.
 - `tests/api.test.js` — JS API: manual init, external trigger, toggle subsets, `setPrefs`/`reset`, destroy cleanup, re-init, full theming.
+- `tests/scope.test.js` — font-scale mode detection (root vs zoom), same-origin iframe and open Shadow DOM propagation, root filter composition.
 
 The suite auto-detects Chrome/Chromium; set `CHROME_PATH` to a browser binary if needed. CI runs the same suite on every push and pull request (`.github/workflows/tests.yml`).
 
@@ -233,6 +252,7 @@ Viele Accessibility-Overlays kosten gemeinnützige Organisationen monatlich Geld
 - **White-Label** — standardmäßig kein Branding, alle Beschriftungen und Farben gehören dir.
 - **Themebar** — Farben, Schriften, Position, Radius, Beschriftungen und die Auswahl der Werkzeuge sind konfigurierbar.
 - **Selbst barrierefrei** — per Tastatur bedienbar, ARIA-Zustände, Fokus-Management, mobiles Bottom-Sheet, respektiert `prefers-reduced-motion`.
+- **Funktioniert überall** — Same-Origin-iframes und offene Shadow Roots werden abgedeckt, die Schrift-Skalierung passt sich an px- und rem-basierte Seiten an, und ein eigener Root-Filter der Seite bleibt erhalten.
 
 ### Funktionen
 
@@ -255,6 +275,8 @@ Viele Accessibility-Overlays kosten gemeinnützige Organisationen monatlich Geld
 | Zurücksetzen | Stellt alle Standardwerte wieder her |
 
 Die Einstellungen werden in `localStorage` gespeichert (Schlüssel konfigurierbar) und bei Folgebesuchen vor dem ersten Rendern angewendet.
+
+Die visuellen Modi erreichen auch Same-Origin-iframes und offene Shadow Roots. Genaue Reichweite und die Grenzen durch Browser-Sicherheit: siehe [Integration & Kompatibilität](#integration--kompatibilität).
 
 ### Schnellstart
 
@@ -300,11 +322,12 @@ Jeder Schlüssel ist optional. Vollständiges Beispiel: [`config.example.js`](co
 | `autoInit` | boolean | `true` | Automatische Initialisierung, sobald `window.A11yToolbarConfig` gesetzt ist |
 | `storageKey` | string | `'a11y_toolbar_prefs'` | localStorage-Schlüssel |
 | `position` | `'left' \| 'right'` | `'left'` | Seite, an der Trigger und Panel andocken |
-| `zIndex` | number | `99998` | Basis-z-Index (Trigger +1, Backdrop -1) |
+| `zIndex` | number | `2147483000` | Basis-z-Index (Trigger +1, Backdrop -1); nahe am CSS-Maximum, damit die Toolbar über Seiten-Overlays bleibt |
 | `trigger` | Selektor/Element | `null` | Vorhandenes Element statt des generierten Buttons verwenden |
 | `credit` | Objekt/false | `false` | Optionale Nennung `{ text, name, url, logo }` |
 | `toggles` | string[] | alle 13 | Welche Werkzeuge in welcher Reihenfolge erscheinen |
-| `fontScale` | Objekt | `{ step: 10, min: 80, max: 150, start: 100 }` | Schriftgrößen-Skalierung |
+| `fontScale` | Objekt | `{ step: 10, min: 80, max: 200, start: 100, mode: 'auto' }` | Schriftgrößen-Skalierung; `mode` ist `auto` \| `root` \| `zoom` (siehe unten) |
+| `scope` | Objekt | `{ iframes: true, shadowDom: true }` | Visuelle Modi auf Same-Origin-iframes und offene Shadow Roots ausweiten |
 | `colors` | Objekt | — | Siehe [Theming](#theming-1) |
 | `fonts` | Objekt | — | Font-Family-Strings für `ui` und `dyslexia` |
 | `offset` | Objekt | `{ side: '1.5rem', triggerBottom: '1.5rem', panelBottom: '5.5rem' }` | Abstände |
@@ -336,7 +359,7 @@ Farben lassen sich in der JS-Konfiguration (`colors`) **oder** als reine CSS-Cus
   --a11y-radius-sm: 8px;
   --a11y-font-ui: 'Inter', system-ui, sans-serif;
   --a11y-font-dyslexia: 'OpenDyslexic', sans-serif;
-  --a11y-z: 99998;
+  --a11y-z: 2147483000;
   --a11y-side: 1.5rem;
   --a11y-trigger-bottom: 1.5rem;
   --a11y-panel-bottom: 5.5rem;
@@ -347,6 +370,8 @@ Farben lassen sich in der JS-Konfiguration (`colors`) **oder** als reine CSS-Cus
   --a11y-contrast-link-hover: #551a8b;
 }
 ```
+
+`--a11y-base-filter` wird automatisch gesetzt, wenn die Seite selbst einen CSS-`filter` auf `<html>` nutzt und Invert/Graustufen aktiv ist — so bleibt der Seiten-Filter erhalten.
 
 Für eine eigene Schrift diese selbst laden (`@font-face` oder Font-Dienst) und `fonts.ui` / `fonts.dyslexia` (oder die CSS-Variablen) darauf zeigen lassen.
 
@@ -401,7 +426,19 @@ Ein vollständiges deutsches Label-Set liegt in [`config.example.js`](config.exa
 
 ### Browser-Unterstützung
 
-Chrome/Edge, Firefox, Safari (aktuelle und vorherige Hauptversionen), iOS Safari, Android Chrome. Verwendet `localStorage`, CSS-Custom-Properties, `:is()`/`:not(Selektorliste)` und Inline-SVG — für alle unterstützten Browser ohne Polyfills. Ohne JavaScript wird die Toolbar einfach nicht gerendert; die Inhalte bleiben vollständig zugänglich.
+Chrome/Edge, Firefox, Safari (aktuelle und vorherige Hauptversionen), iOS Safari, Android Chrome. Verwendet `localStorage`, CSS-Custom-Properties, `:is()`/`:not(Selektorliste)`, Constructed Stylesheets (mit `<style>`-Fallback) und Inline-SVG. Shadow-DOM-Unterstützung nutzt `:host-context()` (Firefox 120+); ältere Firefox-Versionen lassen Shadow Roots einfach unverändert. Ohne JavaScript wird die Toolbar nicht gerendert; die Inhalte bleiben vollständig zugänglich.
+
+### Integration & Kompatibilität
+
+- **Jede Website**: statisches HTML, WordPress (oder jedes CMS), Shopify, Baukasten-Systeme, SPAs. Die zwei Dateien direkt einbinden oder per Google Tag Manager injizieren.
+- **Schrift-Skalierung**: `fontScale.mode: 'auto'` setzt eine Root-Schriftgröße auf rem/em-basierten Seiten und wechselt auf CSS `zoom` bei px-basierten Seiten — Text skaliert in beiden Fällen. Standardbereich bis 200 % (WCAG 1.4.4).
+- **Same-Origin-iframes**: Visuelle Modi werden automatisch übertragen (Feature-Klassen + Constructed Stylesheet) und bei `destroy()` wieder entfernt.
+- **Offenes Shadow DOM**: Styles werden per `adoptedStyleSheets` injiziert (gepatchtes `attachShadow` + MutationObserver deckt bestehende und dynamisch erzeugte Roots ab).
+- **Strikte CSP**: Die Toolbar selbst braucht nur `script-src`- und `style-src`-Einträge für ihre zwei Dateien. Eingebettete Styles nutzen Constructed Stylesheets statt Inline-`<style>`-Tags, daher funktionieren iframe- und Shadow-DOM-Unterstützung auch unter strikter `style-src`-Policy.
+- **Root-Filter der Seite**: Ein `filter`, den die Seite selbst auf `<html>` setzt, wird erfasst und mit Invert/Graustufen kombiniert statt überschrieben.
+- **z-Index**: Standard `2147483000` (konfigurierbar) hält die Toolbar über Seiten-Overlays und Modals.
+- **Inline-`!important`-Styles**: Die Feature-Modi überschreiben gewöhnliche Inline-Styles und CSS-in-JS-Werte. Inline-Deklarationen mit `!important` sind eine Browser-Ausnahme, die kein clientseitiges Werkzeug übersteuern kann.
+- **Harte Grenzen**: Geschlossene Shadow Roots und Cross-Origin-iframes lassen sich nicht stylen — das ist eine Sicherheitsgrenze des Browsers, keine Einschränkung dieser Toolbar.
 
 ### Hinweise zur Barrierefreiheit
 
@@ -418,9 +455,10 @@ npm install
 npm test
 ```
 
-- `tests/config.test.js` — Node-Smoke-Test: Modul-Import ohne DOM, API-Oberfläche, Versionsabgleich mit `package.json`.
+- `tests/config.test.js` — Node-Smoke-Test: Modul-Import ohne DOM, API-Oberfläche, Versionsabgleich mit `package.json`, Gültigkeit der Beispiel-Konfiguration.
 - `tests/browser.test.js` — vollständige UI-Suite in echtem Chrome: alle 13 Werkzeuge, Kontrast-/Invert-/Graustufen-Verhalten, Theming, Persistenz, Reset, Escape, Fokus, mobiles Bottom-Sheet, Konfigurations-Playground.
 - `tests/api.test.js` — JS-API: manuelles Init, externer Trigger, Toggle-Teilmenge, `setPrefs`/`reset`, Destroy-Aufräumen, Re-Init, vollständiges Theming.
+- `tests/scope.test.js` — Erkennung des Schrift-Skalierungsmodus (root vs. zoom), Übertragung auf Same-Origin-iframes und offenes Shadow DOM, Komposition des Root-Filters.
 
 Die Suite erkennt Chrome/Chromium automatisch; bei Bedarf `CHROME_PATH` auf ein Browser-Binary setzen. Die CI führt dieselbe Suite bei jedem Push und Pull Request aus (`.github/workflows/tests.yml`).
 

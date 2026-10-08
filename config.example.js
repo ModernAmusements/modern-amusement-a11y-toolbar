@@ -20,8 +20,10 @@ window.A11yToolbarConfig = {
 	/* Where the trigger and panel dock: 'left' or 'right'. */
 	position: 'left',
 
-	/* Base z-index of the toolbar (trigger is +1, backdrop -1). */
-	zIndex: 99998,
+	/* Base z-index of the toolbar (trigger is +1, backdrop -1).
+	   The default is near the CSS maximum so the toolbar stays on top of
+	   any page overlay. Lower it if it must sit under your own UI. */
+	zIndex: 2147483000,
 
 	/* Use an existing element as the trigger instead of the generated button.
 	   Accepts a CSS selector or an element. */
@@ -57,8 +59,18 @@ window.A11yToolbarConfig = {
 		'dyslexiaFont'
 	],
 
-	/* Font size step controls (percent of the root font size). */
-	fontScale: { step: 10, min: 80, max: 150, start: 100 },
+	/* Font size step controls (percent of the root font size).
+	   mode: 'auto' (default) uses the root font-size on rem/em-based sites
+	   and switches to CSS zoom on px-based sites; 'root' and 'zoom' force
+	   one of the two. Default max is 200% (WCAG 1.4.4 resize target). */
+	fontScale: { step: 10, min: 80, max: 200, start: 100, mode: 'auto' },
+
+	/* Reach of the visual modes:
+	   - iframes:  same-origin iframes get the classes + feature CSS
+	   - shadowDom: open shadow roots get an injected stylesheet
+	   Cross-origin iframes and closed shadow roots cannot be styled by
+	   any client-side tool (browser security). */
+	scope: { iframes: true, shadowDom: true },
 
 	/* Brand colors — applied as CSS custom properties on <html>. */
 	colors: {
