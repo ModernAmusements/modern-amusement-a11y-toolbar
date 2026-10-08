@@ -4,94 +4,213 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Modern Amusement Accessibility Toolbar — Demo &amp; Config Playground</title>
-<link rel="icon" href="data:,">
+<link rel="icon" href="../docs/favicon.svg">
 <link rel="stylesheet" href="../a11y-toolbar.css">
 <link rel="stylesheet" href="../fonts/opendyslexic/opendyslexic.css">
 <style>
-	/* ---------- demo page only ---------- */
+	/* ---------- demo page: brutalist Bielefeld layout, hard lines, no glass ---------- */
 	:root {
-		--demo-ink: #1d2433;
-		--demo-muted: #5a6472;
-		--demo-line: #e3e6ea;
-		--demo-brand: #0a7d55;
+		--demo-ink: #4b1800;
+		--demo-muted: #754d3a;
+		--demo-line: #c7b7ae;
+		--demo-brand: #754d3a;
 		--demo-surface: #ffffff;
 	}
 	* { box-sizing: border-box; }
 	body {
 		margin: 0;
-		font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+		font-family: 'Bricolage Grotesque', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+		font-size: 1rem;
+		line-height: 1.7;
+		letter-spacing: -0.02em;
 		color: var(--demo-ink);
-		background: #f6f7f9;
-		line-height: 1.6;
+		background: #f1ece8;
+		-webkit-font-smoothing: antialiased;
 	}
-	.demo-site { max-width: 760px; margin: 0 auto; padding: 0 20px 120px; }
-	.demo-header {
-		background: var(--demo-brand);
-		color: #fff;
-		padding: 18px 20px;
+	.demo-product {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 12px;
+		padding: 18px 20px 0;
 	}
-	.demo-header-inner { max-width: 760px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-	.demo-logo { font-weight: 800; letter-spacing: .02em; }
-	.demo-logo span { opacity: .75; font-weight: 500; }
-	.demo-nav a { color: #fff; margin-left: 14px; font-size: .9rem; }
-	.demo-hero { padding: 42px 0 10px; }
-	.demo-hero h1 { font-size: clamp(1.7rem, 4vw, 2.5rem); line-height: 1.15; margin: 0 0 12px; }
-	.demo-hero p { color: var(--demo-muted); font-size: 1.05rem; max-width: 58ch; }
-	.demo-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 8px; }
-	.demo-btn {
-		display: inline-block; padding: 10px 18px; border-radius: 8px; text-decoration: none;
-		font-weight: 600; border: 2px solid var(--demo-brand); color: var(--demo-brand); background: transparent;
-	}
-	.demo-btn--solid { background: var(--demo-brand); color: #fff; }
-	h2 { margin-top: 40px; font-size: 1.4rem; }
-	.demo-card {
-		background: var(--demo-surface); border: 1px solid var(--demo-line); border-radius: 10px;
-		padding: 18px 20px; margin: 14px 0;
-	}
-	.demo-card--dark { background: #1d2433; color: #f4f5f7; border-color: #1d2433; }
-	.demo-card--dark a { color: #9ee6c6; }
-	.demo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
-	.demo-img { width: 100%; height: auto; border-radius: 8px; display: block; }
-	table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: .92rem; }
-	th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--demo-line); }
-	.demo-note { font-size: .85rem; color: var(--demo-muted); }
-	.demo-footer { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--demo-line); font-size: .85rem; color: var(--demo-muted); }
+	.demo-product img { height: 44px; width: auto; display: block; }
+	.demo-product span { font-size: .85rem; color: var(--demo-muted); font-weight: 500; }
 
-	/* ---------- customizer ---------- */
+	.demo-navbar {
+		width: min(1200px, calc(100% - 24px));
+		margin: 12px auto 0;
+		background: #f1ece8;
+		border: 2px solid var(--demo-ink);
+		box-shadow: 4px 4px 0 var(--demo-ink);
+		padding: 10px 18px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		flex-wrap: wrap;
+	}
+	.demo-navbrand { font-weight: 700; letter-spacing: -0.02em; }
+	.demo-navbrand span { color: var(--demo-muted); font-weight: 500; }
+	.demo-nav a {
+		color: var(--demo-ink);
+		text-decoration: none;
+		font-size: .9rem;
+		margin-left: 14px;
+		padding-bottom: 2px;
+		border-bottom: 2px solid transparent;
+	}
+	.demo-nav a:hover { border-bottom-color: var(--demo-brand); }
+
+	.demo-site { max-width: 1200px; margin: 0 auto; padding: 0 12px 120px; }
+
+	/* LAYOUT: hero side-by-side (text left / graphic right), gap 48 */
+	.demo-hero {
+		display: flex;
+		align-items: center;
+		gap: 48px;
+		padding: 48px 6px 24px;
+	}
+	.demo-hero-text { flex: 1; min-width: 0; text-align: start; }
+	.demo-hero-text h1 {
+		font-size: clamp(2rem, 4vw, 2.75rem);
+		font-weight: 700;
+		letter-spacing: -0.07em;
+		line-height: 1.15;
+		margin: 0 0 12px;
+	}
+	.demo-hero-text p { color: var(--demo-muted); font-size: 1rem; max-width: 58ch; margin: 0 0 12px; }
+	.demo-hero-graphic { width: 50%; flex-shrink: 0; }
+	.demo-hero-graphic svg { width: 100%; height: auto; display: block; border: 2px solid var(--demo-ink); box-shadow: 6px 6px 0 var(--demo-ink); }
+
+	/* Brutalist buttons: square, hard 2px outline, hard offset shadow */
+	.demo-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 24px 0 8px; }
+	.demo-btn {
+		display: inline-block; padding: 10px 20px; border-radius: 0; text-decoration: none;
+		font-weight: 600; letter-spacing: -0.02em;
+		border: 2px solid var(--demo-ink); color: var(--demo-ink); background: transparent;
+		box-shadow: 3px 3px 0 var(--demo-ink);
+		transition: background-color .15s ease, color .15s ease, box-shadow .15s ease, transform .15s ease;
+	}
+	.demo-btn:hover, .demo-btn:focus-visible { background: var(--demo-brand); color: #f1ece8; }
+	.demo-btn:active { box-shadow: none; transform: translate(3px, 3px); }
+	.demo-btn--solid { background: var(--demo-brand); color: #f1ece8; }
+
+	/* LAYOUT: section header (badge pill + h3 + desc) with hard border-bottom */
+	.demo-section { margin: 48px 0; }
+	.demo-section-header {
+		display: flex; flex-direction: column; gap: 8px;
+		padding: 26px 0 16px; text-align: start; width: 100%;
+		border-bottom: 2px solid var(--demo-ink);
+	}
+	.demo-section-header h3 {
+		margin: 0; font-size: 1.875rem; font-weight: 600;
+		letter-spacing: -0.07em; line-height: 1.15;
+	}
+	.demo-section-header p { margin: 0; color: var(--demo-muted); font-size: 1.125rem; line-height: 1.3; }
+	.demo-section h2 { margin: 32px 0 8px; font-size: 1.5rem; font-weight: 600; letter-spacing: -0.07em; }
+
+	/* Badge pill (section-intro-badge) */
+	.demo-badge {
+		display: inline-block; align-self: flex-start;
+		padding: 5px 14px; border-radius: 99px;
+		background: var(--demo-brand); color: #f1ece8;
+		border: 1px solid var(--demo-ink);
+		font-size: .875rem; font-weight: 400; line-height: 1;
+	}
+
+	/* LAYOUT: line-separated rows with hard left accent (Bielefeld list rows) */
+	.demo-rows { list-style: none; margin: 0; padding: 0; }
+	.demo-rows li {
+		display: flex; align-items: center; justify-content: space-between; gap: 16px;
+		padding: 14px 8px; border-bottom: 2px solid var(--demo-line);
+		border-left: 4px solid transparent;
+		transition: border-left-color .15s ease, background-color .15s ease;
+	}
+	.demo-rows li:hover { border-left-color: var(--demo-brand); background: #e7ddd4; }
+	.demo-rows h4 { margin: 0 0 2px; font-size: 1.125rem; font-weight: 600; letter-spacing: -0.02em; }
+	.demo-rows p { margin: 0; color: var(--demo-muted); font-size: .9rem; }
+	.demo-rows a { color: var(--demo-brand); font-weight: 600; white-space: nowrap; }
+
+	/* LAYOUT: stats grid (auto-fit cards, hard borders + hard shadows) */
+	.demo-stats-grid {
+		display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+		gap: 24px; margin: 24px 0 0;
+	}
+	.demo-stat { border: 2px solid var(--demo-ink); background: #fff; padding: 24px; box-shadow: 5px 5px 0 var(--demo-ink); }
+	.demo-stat-value { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.07em; line-height: 1; }
+	.demo-stat-label { color: var(--demo-muted); margin-top: 8px; font-size: .95rem; }
+
+	/* Cards (for feature testing) */
+	.demo-card {
+		border: 2px solid var(--demo-ink); background: var(--demo-surface);
+		box-shadow: 5px 5px 0 var(--demo-ink);
+		padding: 20px 24px; margin: 16px 0;
+	}
+	.demo-card a { color: var(--demo-brand); font-weight: 600; }
+	.demo-card--dark { background: #60331d; color: #f4f0eb; border: 2px solid var(--demo-ink); box-shadow: 5px 5px 0 var(--demo-ink); }
+	.demo-card--dark a { color: #dcd1cb; }
+
+	/* Table: Bielefeld data-table with hard row lines */
+	table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: .95rem; }
+	th, td { text-align: start; padding: 10px 8px; border-bottom: 2px solid var(--demo-line); }
+	th { font-weight: 600; color: var(--demo-muted); font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: .85rem; }
+
+	/* Form: brutalist square inputs */
+	.demo-form label { display: block; font-size: .85rem; font-weight: 600; margin-bottom: 4px; }
+	.demo-form input, .demo-form textarea {
+		width: 100%; max-width: 420px; padding: 8px 12px;
+		border: 2px solid var(--demo-ink); border-radius: 0;
+		background: #fff; font: inherit; color: var(--demo-ink);
+	}
+	.demo-form input:focus, .demo-form textarea:focus { outline: 2px solid var(--demo-brand); border-color: var(--demo-brand); }
+	.demo-form p { margin: 0 0 12px; }
+
+	.demo-note { font-size: .85rem; color: var(--demo-muted); }
+	.demo-footer {
+		margin-top: 64px; padding-top: 24px; border-top: 2px solid var(--demo-ink);
+		font-size: .85rem; color: var(--demo-muted);
+	}
+
+	/* ---------- customizer (brutalist) ---------- */
 	.cfg-toggle {
 		position: fixed; top: 14px; right: 14px; z-index: 120000;
-		border: 0; border-radius: 8px; padding: 10px 14px; cursor: pointer;
-		background: #1d2433; color: #fff; font-weight: 600; font-size: .85rem;
-		box-shadow: 0 6px 18px rgba(0,0,0,.18);
+		border: 2px solid var(--demo-ink); border-radius: 0; padding: 10px 14px; cursor: pointer;
+		background: #4b1800; color: #f1ece8; font-weight: 600; font-size: .85rem;
+		box-shadow: 3px 3px 0 var(--demo-ink);
 	}
 	.cfg-panel {
 		position: fixed; top: 0; right: 0; bottom: 0; width: 340px; max-width: 92vw;
-		background: #fff; border-left: 1px solid var(--demo-line); z-index: 119999;
-		overflow-y: auto; padding: 64px 18px 26px; transform: translateX(105%);
-		transition: transform .28s ease; box-shadow: -10px 0 34px rgba(0,0,0,.12);
+		background: #f1ece8; border-left: 2px solid var(--demo-ink); z-index: 119999;
+		overflow-y: auto; padding: 72px 18px 26px; transform: translateX(105%);
+		transition: transform .28s ease; box-shadow: none;
 	}
 	.cfg-panel.is-open { transform: translateX(0); }
-	.cfg-panel h2 { margin: 0 0 4px; font-size: 1.1rem; }
-	.cfg-panel h3 { margin: 22px 0 8px; font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--demo-muted); }
+	.cfg-panel h2 { margin: 0 0 4px; font-size: 1.1rem; letter-spacing: -0.02em; }
+	.cfg-panel h3 { margin: 22px 0 8px; font-size: .8rem; font-weight: 600; letter-spacing: -0.01em; color: var(--demo-muted); }
 	.cfg-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 7px 0; font-size: .88rem; }
 	.cfg-row label { flex: 1; }
-	.cfg-row input[type="color"] { width: 42px; height: 28px; border: 1px solid var(--demo-line); border-radius: 6px; padding: 1px; background: #fff; }
+	.cfg-row input[type="color"] { width: 42px; height: 28px; border: 1px solid var(--demo-ink); border-radius: 0; padding: 1px; background: #fff; }
 	.cfg-row input[type="text"], .cfg-row select {
-		width: 150px; padding: 6px 8px; border: 1px solid var(--demo-line); border-radius: 6px; font: inherit; font-size: .85rem;
+		width: 150px; padding: 6px 8px; border: 1px solid var(--demo-ink); border-radius: 0; font: inherit; font-size: .85rem; background: #fff;
 	}
 	.cfg-checks { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 10px; font-size: .82rem; }
 	.cfg-checks label { display: flex; gap: 6px; align-items: center; }
 	.cfg-actions { display: flex; gap: 8px; margin-top: 18px; }
 	.cfg-actions button {
-		flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--demo-line);
-		background: #f3f4f6; cursor: pointer; font-weight: 600; font-size: .85rem;
+		flex: 1; padding: 10px; border-radius: 0; border: 2px solid var(--demo-ink);
+		background: #fff; cursor: pointer; font-weight: 600; font-size: .85rem; color: var(--demo-ink);
 	}
-	.cfg-actions button.primary { background: var(--demo-brand); border-color: var(--demo-brand); color: #fff; }
+	.cfg-actions button.primary { background: var(--demo-brand); border-color: var(--demo-ink); color: #f1ece8; }
 	.cfg-json {
-		margin-top: 14px; background: #0f172a; color: #c7f5e2; border-radius: 8px; padding: 12px;
-		font-size: .72rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word; max-height: 260px; overflow: auto;
+		margin-top: 14px; background: #60331d; color: #f1ece8; padding: 12px;
+		font-size: .72rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word; max-height: 260px; overflow: auto; font-family: ui-monospace, 'SF Mono', Menlo, monospace;
 	}
 	.cfg-note { font-size: .78rem; color: var(--demo-muted); margin-top: 14px; }
+	@media (max-width: 768px) {
+		.demo-hero { flex-direction: column; gap: 24px; }
+		.demo-hero-graphic { width: 100%; }
+	}
 	@media (max-width: 640px) {
 		.cfg-panel { width: 100%; max-width: 100%; }
 	}
@@ -100,7 +219,7 @@
 	/* Config passed to the toolbar before it loads. */
 	window.A11yToolbarConfig = {
 		position: 'left',
-		colors: { accent: '#0a7d55' },
+		colors: { accent: '#754d3a' },
 		credit: false
 	};
 </script>
@@ -108,88 +227,154 @@
 </head>
 <body>
 
-<header class="demo-header">
-	<div class="demo-header-inner">
-		<div class="demo-logo">Musterverein e.V. <span>· Demo</span></div>
-		<nav class="demo-nav">
-			<a href="#angebote">Angebote</a>
-			<a href="#kontakt">Kontakt</a>
-		</nav>
+<div class="demo-product">
+	<img src="../docs/ma_a11y-wordmark.svg" alt="Modern Amusement Accessibility Toolbar">
+	<span>Demo &amp; Config Playground</span>
+</div>
+
+<nav class="demo-navbar" aria-label="Demo navigation">
+	<div class="demo-navbrand">Musterverein e.V. <span>· Demo</span></div>
+	<div class="demo-nav">
+		<a href="#angebote">Angebote</a>
+		<a href="#testen">Die Toolbar</a>
+		<a href="#kontakt">Kontakt</a>
 	</div>
-</header>
+</nav>
 
 <main class="demo-site">
+
+	<!-- LAYOUT 001: hero side-by-side -->
 	<section class="demo-hero">
-		<h1>Gemeinsam für eine barrierefreie Stadt</h1>
-		<p>
-			Diese Demo zeigt die <strong>Modern Amusement Accessibility Toolbar</strong> auf einer
-			typischen Non-Profit-Website. Öffne die Toolbar unten links und probiere alle 13
-			Funktionen aus. Mit dem Customizer (oben rechts) kannst du Farben, Schriften,
-			Position und Sprache live anpassen — ideal für White-Label-Einsätze.
-		</p>
-		<div class="demo-actions">
-			<a class="demo-btn demo-btn--solid" href="#angebote">Unsere Angebote</a>
-			<a class="demo-btn" href="#kontakt">Kontakt aufnehmen</a>
+		<div class="demo-hero-text">
+			<span class="demo-badge">Frei für gemeinnützige Organisationen</span>
+			<h1>Barrierefreiheit für jede Website</h1>
+			<p>
+				Diese Demo zeigt die <strong>Modern Amusement Accessibility Toolbar</strong> auf einer
+				typischen Non-Profit-Website. Öffne die Toolbar unten links und probiere alle 13
+				Funktionen aus. Mit dem Customizer (oben rechts) passt du Farben, Schriften,
+				Position und Sprache live an.
+			</p>
+			<div class="demo-actions">
+				<a class="demo-btn demo-btn--solid" href="#angebote">Unsere Angebote</a>
+				<a class="demo-btn" href="#testen">Toolbar testen</a>
+			</div>
+		</div>
+		<div class="demo-hero-graphic" aria-hidden="true">
+			<svg viewBox="0 0 760 440" xmlns="http://www.w3.org/2000/svg" role="img">
+				<rect width="760" height="440" fill="#f1ece8"/>
+				<rect x="0" y="0" width="760" height="440" fill="none" stroke="#4b1800" stroke-width="0"/>
+				<circle cx="130" cy="220" r="110" fill="#4b1800"/>
+				<circle cx="380" cy="150" r="70" fill="#754d3a"/>
+				<rect x="470" y="110" width="230" height="220" fill="#ffffff" stroke="#4b1800" stroke-width="4"/>
+				<rect x="470" y="110" width="230" height="40" fill="#754d3a"/>
+				<rect x="495" y="180" width="180" height="14" fill="#4b1800"/>
+				<rect x="495" y="212" width="140" height="14" fill="#4b1800" opacity=".5"/>
+				<rect x="495" y="244" width="160" height="14" fill="#4b1800" opacity=".3"/>
+				<rect x="140" y="330" width="200" height="10" fill="#c7b7ae"/>
+				<rect x="140" y="354" width="160" height="10" fill="#c7b7ae"/>
+			</svg>
 		</div>
 	</section>
 
-	<h2 id="angebote">Unsere Angebote</h2>
-	<div class="demo-grid">
-		<div class="demo-card">
-			<h3>Beratung</h3>
-			<p>Kostenlose und vertrauliche Beratung für alle Menschen in unserer Stadt.</p>
-			<a href="#kontakt">Mehr erfahren</a>
+	<!-- LAYOUT 002: section header + line rows -->
+	<section class="demo-section" id="angebote">
+		<header class="demo-section-header">
+			<span class="demo-badge">Angebote</span>
+			<h3>Unsere Angebote</h3>
+			<p>Kostenlose Angebote für alle Menschen in unserer Stadt.</p>
+		</header>
+		<ul class="demo-rows">
+			<li>
+				<div><h4>Beratung</h4><p>Kostenlos und vertraulich, mit und ohne Termin.</p></div>
+				<a href="#kontakt">Mehr erfahren</a>
+			</li>
+			<li>
+				<div><h4>Bildung</h4><p>Kurse, Workshops und Sprachangebote für Jung und Alt.</p></div>
+				<a href="#kontakt">Mehr erfahren</a>
+			</li>
+			<li>
+				<div><h4>Begegnung</h4><p>Offene Treffs, Feste und Projekte, die Menschen zusammenbringen.</p></div>
+				<a href="#kontakt">Mehr erfahren</a>
+			</li>
+		</ul>
+	</section>
+
+	<!-- LAYOUT: centred stat cards + dark block -->
+	<section class="demo-section" id="testen">
+		<header class="demo-section-header">
+			<span class="demo-badge">Die Toolbar</span>
+			<h3>Barrierefreiheit testen</h3>
+			<p>Alle Funktionen wirken direkt auf diese Demo-Seite: Links, Überschriften, Formulare und Tabellen.</p>
+		</header>
+
+		<div class="demo-stats-grid">
+			<div class="demo-stat"><div class="demo-stat-value">13</div><div class="demo-stat-label">Werkzeuge: Kontrast, Dunkelmodus, Lesehilfe, Dyslexie-Schrift und mehr</div></div>
+			<div class="demo-stat"><div class="demo-stat-value">200%</div><div class="demo-stat-label">Schriftgröße bis 200 % (WCAG 1.4.4) — auch auf px-basierten Seiten</div></div>
+			<div class="demo-stat"><div class="demo-stat-value">0&nbsp;KB</div><div class="demo-stat-label">Externe Abhängigkeiten — keine Requests, kein Tracking, kein Telemetrie</div></div>
 		</div>
-		<div class="demo-card">
-			<h3>Bildung</h3>
-			<p>Kurse, Workshops und Sprachangebote für Jung und Alt.</p>
-			<a href="#kontakt">Mehr erfahren</a>
+
+		<div class="demo-card--dark">
+			<h2>Sektion mit dunklem Hintergrund</h2>
+			<p>Diese Fläche prüft die Kontrast- und Invert-Modi auf dunklen Designs. <a href="#kontakt">Kontakt</a></p>
 		</div>
+
 		<div class="demo-card">
-			<h3>Begegnung</h3>
-			<p>Offene Treffs, Feste und Projekte, die Menschen zusammenbringen.</p>
-			<a href="#kontakt">Mehr erfahren</a>
+			<h4>Hinweis</h4>
+			<p><a href="#testen">Alle Links</a> auf dieser Seite lassen sich mit „Links unterstreichen" und „Links hervorheben" markieren. Die <strong>Dyslexie-freundliche Schrift</strong> und die <strong>Lesehilfe</strong> wirken direkt auf diesen Text.</p>
 		</div>
-	</div>
+	</section>
 
-	<h2>Barrierefreiheit testen</h2>
-	<p>
-		Alle Funktionen wirken direkt auf diese Demo-Seite: <a href="#angebote">Links</a>,
-		Überschriften, Formulare und Bilder. So siehst du sofort, wie sich
-		<strong>Hoher Kontrast</strong>, <strong>Dunkles Design</strong> oder die
-		<strong>Dyslexie-freundliche Schrift</strong> auf deine Inhalte auswirken.
-	</p>
+	<!-- LAYOUT 003: centred CTA section -->
+	<section class="demo-section">
+		<div class="demo-card">
+			<span class="demo-badge">Bereit?</span>
+			<h2>Die Toolbar einbinden</h2>
+			<p>Zwei Dateien, ein <code>&lt;script&gt;</code> — mehr braucht es nicht. Farben, Schriften und Beschriftungen sind über CSS-Variablen und eine Konfiguration anpassbar.</p>
+			<div class="demo-actions">
+				<a class="demo-btn demo-btn--solid" href="https://github.com/ModernAmusements/modern-amusement-a11y-toolbar" target="_blank" rel="noopener noreferrer">README lesen</a>
+				<a class="demo-btn" href="#kontakt">Kontakt aufnehmen</a>
+			</div>
+		</div>
+	</section>
 
-	<div class="demo-card demo-card--dark">
-		<h3>Sektion mit dunklem Hintergrund</h3>
-		<p>Diese Fläche prüft die Kontrast- und Invert-Modi auf dunklen Designs. <a href="#kontakt">Kontakt</a></p>
-	</div>
+	<!-- Form -->
+	<section class="demo-section" id="formular">
+		<header class="demo-section-header">
+			<span class="demo-badge">Formular</span>
+			<h3>Nachricht senden</h3>
+			<p>Brutalistische Eingabefelder: eckig, harte Linien.</p>
+		</header>
+		<form class="demo-card demo-form" action="#" onsubmit="return false">
+			<p>
+				<label for="f-name">Name</label>
+				<input id="f-name" type="text" name="name" placeholder="Vor- und Nachname" autocomplete="name">
+			</p>
+			<p>
+				<label for="f-msg">Nachricht</label>
+				<textarea id="f-msg" name="msg" rows="3" placeholder="Deine Nachricht"></textarea>
+			</p>
+			<p><button class="demo-btn demo-btn--solid" type="submit">Absenden</button></p>
+		</form>
+	</section>
 
-	<h2>Bild</h2>
-	<img class="demo-img" alt="Illustration: Gemeinschaft" width="760" height="220"
-		src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 760 220'%3E%3Crect width='760' height='220' fill='%230a7d55'/%3E%3Ccircle cx='140' cy='110' r='62' fill='%23ffd54f'/%3E%3Ccircle cx='300' cy='80' r='38' fill='%239ee6c6'/%3E%3Crect x='400' y='60' width='240' height='100' rx='14' fill='%23ffffff' opacity='.92'/%3E%3Crect x='430' y='90' width='180' height='12' rx='6' fill='%231d2433'/%3E%3Crect x='430' y='116' width='120' height='12' rx='6' fill='%231d2433' opacity='.55'/%3E%3C/svg%3E">
-
-	<h2>Formular</h2>
-	<form class="demo-card" action="#" onsubmit="return false">
-		<p>
-			<label>Name<br><input type="text" name="name" placeholder="Vor- und Nachname" style="padding:8px 10px;border:1px solid #e3e6ea;border-radius:6px;width:100%;max-width:320px"></label>
-		</p>
-		<p>
-			<label>Nachricht<br><textarea name="msg" rows="3" placeholder="Deine Nachricht" style="padding:8px 10px;border:1px solid #e3e6ea;border-radius:6px;width:100%;max-width:420px"></textarea></label>
-		</p>
-		<p><button class="demo-btn demo-btn--solid" type="submit">Absenden</button></p>
-	</form>
-
-	<h2 id="kontakt">Kontakt</h2>
-	<table>
-		<tr><th>Angebot</th><th>Zeit</th><th>Ort</th></tr>
-		<tr><td>Offener Treff</td><td>Montag, 15–18 Uhr</td><td>Musterstraße 1</td></tr>
-		<tr><td>Sprachcafé</td><td>Mittwoch, 10–12 Uhr</td><td>Musterstraße 3</td></tr>
-		<tr><td>Beratung</td><td>Donnerstag, 14–17 Uhr</td><td>Musterstraße 1</td></tr>
-	</table>
+	<!-- Table -->
+	<section class="demo-section" id="kontakt">
+		<header class="demo-section-header">
+			<span class="demo-badge">Kontakt</span>
+			<h3>Öffnungszeiten &amp; Orte</h3>
+			<p>Tabellen mit harten Zeilenlinien — genau wie im Bielefeld-Design.</p>
+		</header>
+		<table>
+			<tr><th>Angebot</th><th>Zeit</th><th>Ort</th></tr>
+			<tr><td>Offener Treff</td><td>Montag, 15–18 Uhr</td><td>Musterstraße 1</td></tr>
+			<tr><td>Sprachcafé</td><td>Mittwoch, 10–12 Uhr</td><td>Musterstraße 3</td></tr>
+			<tr><td>Beratung</td><td>Donnerstag, 14–17 Uhr</td><td>Musterstraße 1</td></tr>
+		</table>
+	</section>
 
 	<footer class="demo-footer">
 		<p>
+			<img src="../docs/ma_a11y-logo.svg" alt="" style="height:22px;width:auto;vertical-align:middle;margin-right:6px">
 			Demo der <strong>Modern Amusement Accessibility Toolbar</strong> · White-Label · frei für gemeinnützige Organisationen.<br>
 			<a href="https://modern-amusement.dev/de" target="_blank" rel="noopener noreferrer">modern-amusement.dev</a>
 		</p>
@@ -206,16 +391,17 @@
 	<p class="cfg-note">Ändere Werte und klicke <strong>Apply</strong> — die Toolbar startet mit der neuen Konfiguration neu.</p>
 
 	<h3>Farben</h3>
-	<div class="cfg-row"><label for="c-accent">Akzent</label><input type="color" id="c-accent" value="#0a7d55"></div>
-	<div class="cfg-row"><label for="c-surface">Fläche</label><input type="color" id="c-surface" value="#ffffff"></div>
-	<div class="cfg-row"><label for="c-text">Text</label><input type="color" id="c-text" value="#1a1a1a"></div>
-	<div class="cfg-row"><label for="c-border">Rahmen</label><input type="color" id="c-border" value="#e2e2e2"></div>
+	<div class="cfg-row"><label for="c-accent">Akzent</label><input type="color" id="c-accent" value="#754d3a"></div>
+	<div class="cfg-row"><label for="c-surface">Fläche</label><input type="color" id="c-surface" value="#f1ece8"></div>
+	<div class="cfg-row"><label for="c-text">Text</label><input type="color" id="c-text" value="#4b1800"></div>
+	<div class="cfg-row"><label for="c-border">Rahmen</label><input type="color" id="c-border" value="#c7b7ae"></div>
 	<div class="cfg-row"><label for="c-highlight">Highlight</label><input type="color" id="c-highlight" value="#ffff00"></div>
 
 	<h3>Schriften</h3>
 	<div class="cfg-row">
 		<label for="c-font-ui">UI-Schrift</label>
 		<select id="c-font-ui">
+			<option value="'Bricolage Grotesque', system-ui, sans-serif" selected>Bricolage Grotesque (Bielefeld)</option>
 			<option value="">System (Standard)</option>
 			<option value="Georgia, 'Times New Roman', serif">Serif</option>
 			<option value="'Courier New', ui-monospace, monospace">Monospace</option>
@@ -291,7 +477,6 @@
 	var jsonOut = document.getElementById('cfg-json');
 	var togglesWrap = document.getElementById('c-toggles');
 
-	/* Build the toggle checkboxes. */
 	TOGGLE_IDS.forEach(function (id) {
 		var label = document.createElement('label');
 		var input = document.createElement('input');
@@ -358,7 +543,6 @@
 		location.reload();
 	});
 
-	/* First render of the JSON preview. */
 	window.addEventListener('DOMContentLoaded', function () {
 		setTimeout(function () {
 			jsonOut.textContent = JSON.stringify(buildConfig(), null, 2);

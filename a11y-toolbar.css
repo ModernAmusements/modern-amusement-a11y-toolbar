@@ -10,22 +10,47 @@
        --a11y-font-ui: 'Inter', system-ui, sans-serif;
        --a11y-font-dyslexia: 'OpenDyslexic', sans-serif;
      }
+
+   Default typography follows the Modern Amusement design system (Bielefeld
+   design tokens): Bricolage Grotesque (200–800), base tracking −0.02em,
+   no uppercase transforms, no positive letter-spacing, spacing rhythm
+   4/8/12/16/20/24/32/48, radius catalog 8/12/20/24/9999.
    ========================================================================== */
 
+/* Bricolage Grotesque — self-hosted variable font, SIL OFL 1.1
+   (fonts/bricolage-grotesque/OFL.txt) */
+@font-face {
+	font-family: 'Bricolage Grotesque';
+	src: url('fonts/bricolage-grotesque/bricolage-latin.woff2') format('woff2');
+	font-weight: 200 800;
+	font-style: normal;
+	font-display: swap;
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+	font-family: 'Bricolage Grotesque';
+	src: url('fonts/bricolage-grotesque/bricolage-latin-ext.woff2') format('woff2');
+	font-weight: 200 800;
+	font-style: normal;
+	font-display: swap;
+	unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
 :root {
-	/* Brand / accent */
-	--a11y-accent: #e8622c;
-	--a11y-accent-text: #ffffff;
+	/* Brand / accent — Modern Amusement warm-brown palette (poster #F1ECE8 / #4B1800) */
+	--a11y-accent: #754d3a;
+	--a11y-accent-text: #f1ece8;
 
 	/* Panel surface */
-	--a11y-surface: #ffffff;
-	--a11y-surface-hover: #f1ece1;
-	--a11y-text: #1a1a1a;
-	--a11y-text-muted: #5c5c5c;
-	--a11y-border: #e2e2e2;
+	--a11y-surface: #f1ece8;
+	--a11y-surface-hover: #dcd1cb;
+	--a11y-text: #4b1800;
+	--a11y-text-muted: #754d3a;
+	--a11y-border: #c7b7ae;
 
 	/* Focus outline */
-	--a11y-focus: #16294f;
+	--a11y-focus: #4b1800;
 
 	/* Highlight modes (links / headings) */
 	--a11y-highlight: #ffff00;
@@ -38,13 +63,17 @@
 	/* Backdrop behind the mobile bottom sheet */
 	--a11y-backdrop: rgba(0, 0, 0, 0.4);
 
-	/* Geometry */
-	--a11y-radius: 12px;
-	--a11y-radius-sm: 8px;
+	/* Geometry — minimal/brutalist: square corners, hard offset shadows.
+	   The only radius in use is the badge pill (99px) and the dyslexia
+	   cursor; everything else is 0. */
+	--a11y-radius: 0;
+	--a11y-radius-sm: 0;
+	--a11y-shadow: 4px 4px 0 var(--a11y-text);
 
-	/* Fonts */
-	--a11y-font-ui: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	/* Fonts — Bricolage Grotesque (bundled, OFL) + mono for the size value */
+	--a11y-font-ui: 'Bricolage Grotesque', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 	--a11y-font-dyslexia: 'OpenDyslexic', 'Comic Sans MS', sans-serif;
+	--a11y-font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace;
 
 	/* High contrast palette (advanced override) */
 	--a11y-contrast-bg: #ffffff;
@@ -67,6 +96,10 @@
    Trigger button
    -------------------------------------------------------------------------- */
 
+/* --------------------------------------------------------------------------
+   Trigger — brutalist: square, hard 2px outline, hard offset shadow
+   -------------------------------------------------------------------------- */
+
 .a11y-trigger {
 	position: fixed;
 	bottom: var(--a11y-trigger-bottom);
@@ -74,25 +107,28 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 0.5rem;
-	padding: 0.55rem 1rem;
-	border: 2px solid var(--a11y-accent);
-	border-radius: 999px;
+	padding: 0.6rem 1rem;
+	border: 2px solid var(--a11y-text);
+	border-radius: var(--a11y-radius) var(--a11y-radius) 0 0;
 	background: var(--a11y-surface);
 	color: var(--a11y-text);
 	font-family: var(--a11y-font-ui);
 	font-size: 0.875rem;
 	font-weight: 600;
 	line-height: 1.2;
+	letter-spacing: var(--a11y-tracking, -0.02em);
 	cursor: pointer;
-	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
-	transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+	-webkit-font-smoothing: antialiased;
+	box-shadow: 4px 4px 0 var(--a11y-text);
+	transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .a11y-trigger:hover,
 .a11y-trigger:focus-visible {
 	background: var(--a11y-accent);
 	color: var(--a11y-accent-text);
-	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+	box-shadow: 2px 2px 0 var(--a11y-text);
+	transform: translate(2px, 2px);
 }
 
 .a11y-trigger svg {
@@ -108,7 +144,9 @@ html[data-a11y-position="right"] .a11y-trigger {
 }
 
 /* --------------------------------------------------------------------------
-   Panel
+   Panel — brutalist section card: solid surface, hard outline, hard shadow.
+   Layout follows the Bielefeld primitives: section header (badge pill + title
+   + hard border-bottom), controls as line-separated rows with a left accent.
    -------------------------------------------------------------------------- */
 
 .a11y-toolbar {
@@ -122,13 +160,17 @@ html[data-a11y-position="right"] .a11y-trigger {
 	-webkit-overflow-scrolling: touch;
 	overscroll-behavior: contain;
 	background: var(--a11y-surface);
-	border: 1px solid var(--a11y-accent);
+	border: 2px solid var(--a11y-text);
 	border-radius: var(--a11y-radius);
-	box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
-	padding: 1rem;
+	box-shadow: 8px 8px 0 var(--a11y-text);
+	padding: 1.25rem 1rem 1rem;
 	font-family: var(--a11y-font-ui);
 	font-size: 1rem;
+	font-weight: 400;
+	line-height: 1.5;
+	letter-spacing: var(--a11y-tracking, -0.02em);
 	color: var(--a11y-text);
+	-webkit-font-smoothing: antialiased;
 	transform: translateY(1rem);
 	opacity: 0;
 	pointer-events: none;
@@ -151,18 +193,46 @@ html[data-a11y-position="right"] .a11y-toolbar {
 	visibility: visible;
 }
 
+/* Section header (Bielefeld content-section-header): badge + title, hard line */
 .a11y-header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	margin-bottom: 0.75rem;
-	padding-bottom: 0.75rem;
-	border-bottom: 1px solid var(--a11y-border);
+	padding: 0 0 1rem;
+	border-bottom: 2px solid var(--a11y-text);
+}
+
+.a11y-heading {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.5rem;
+}
+
+/* Badge pill (Bielefeld section-intro-badge) */
+.a11y-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 4px 10px;
+	border: 1px solid var(--a11y-text);
+	border-radius: 99px;
+	background: var(--a11y-accent);
+	color: var(--a11y-accent-text);
+	line-height: 1;
+}
+
+.a11y-badge svg {
+	width: 14px;
+	height: 14px;
 }
 
 .a11y-title {
 	font-size: 1.05rem;
-	font-weight: 700;
+	font-weight: 600;
+	line-height: 1.15;
+	letter-spacing: var(--a11y-tracking, -0.02em);
 	color: var(--a11y-text);
 }
 
@@ -181,12 +251,13 @@ html[data-a11y-position="right"] .a11y-toolbar {
 	color: var(--a11y-accent);
 }
 
+/* Groups — hard line separators */
 .a11y-group {
 	margin-bottom: 0.75rem;
 }
 
 .a11y-group--bordered {
-	border-top: 1px solid var(--a11y-border);
+	border-top: 2px solid var(--a11y-text);
 	padding-top: 0.75rem;
 	margin-bottom: 0;
 }
@@ -195,8 +266,9 @@ html[data-a11y-position="right"] .a11y-toolbar {
 	display: block;
 	font-size: 0.8rem;
 	font-weight: 600;
+	letter-spacing: -0.01em;
 	color: var(--a11y-text-muted);
-	margin-bottom: 0.35rem;
+	margin-bottom: 0.5rem;
 }
 
 .a11y-font-controls {
@@ -205,35 +277,55 @@ html[data-a11y-position="right"] .a11y-toolbar {
 	gap: 0.5rem;
 }
 
+/* Square controls: hard 2px outline, press = hard shadow shift */
 .a11y-btn-sm {
 	width: 2.25rem;
 	height: 2.25rem;
-	border: 1px solid var(--a11y-border);
-	background: var(--a11y-surface-hover);
+	border: 2px solid var(--a11y-text);
 	border-radius: var(--a11y-radius-sm);
+	background: var(--a11y-surface);
 	font-size: 1.25rem;
-	font-weight: 700;
+	font-weight: 600;
 	color: var(--a11y-text);
 	cursor: pointer;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+	box-shadow: 2px 2px 0 var(--a11y-text);
+	transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .a11y-btn-sm:hover,
 .a11y-btn-sm:focus-visible {
 	background: var(--a11y-accent);
 	color: var(--a11y-accent-text);
-	border-color: var(--a11y-accent);
+}
+
+.a11y-btn-sm:active {
+	box-shadow: none;
+	transform: translate(2px, 2px);
 }
 
 .a11y-font-val {
 	flex: 1;
 	text-align: center;
 	font-size: 0.9rem;
-	font-weight: 600;
+	font-weight: 500;
+	font-family: var(--a11y-font-mono);
+	letter-spacing: -0.02em;
 	color: var(--a11y-text);
+}
+
+/* Toggles: line-separated rows with hard left accent (Bielefeld list rows) */
+.a11y-toggle-grid {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	margin-bottom: 0.75rem;
+}
+
+.a11y-toggle-grid .a11y-group {
+	margin-bottom: 0;
 }
 
 .a11y-toggle-btn {
@@ -241,16 +333,24 @@ html[data-a11y-position="right"] .a11y-toolbar {
 	display: flex;
 	align-items: center;
 	gap: 0.6rem;
-	border: 1px solid var(--a11y-border);
-	background: var(--a11y-surface-hover);
-	border-radius: var(--a11y-radius-sm);
-	padding: 0.6rem 0.75rem;
+	border: 0;
+	border-bottom: 2px solid var(--a11y-border);
+	border-left: 4px solid transparent;
+	border-radius: var(--a11y-radius) var(--a11y-radius) 0 0;
+	background: transparent;
+	padding: 0.6rem 0.4rem 0.6rem 0.2rem;
 	font-size: 0.9rem;
 	font-weight: 500;
+	letter-spacing: var(--a11y-tracking, -0.02em);
+	line-height: 1.3;
 	color: var(--a11y-text);
-	text-align: left;
+	text-align: start;
 	cursor: pointer;
-	transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+	transition: background-color 0.15s ease, color 0.15s ease, border-left-color 0.15s ease;
+}
+
+.a11y-toggle-grid .a11y-group:last-child .a11y-toggle-btn {
+	border-bottom: none;
 }
 
 .a11y-toggle-btn svg {
@@ -259,32 +359,42 @@ html[data-a11y-position="right"] .a11y-toolbar {
 
 .a11y-toggle-btn:hover,
 .a11y-toggle-btn:focus-visible {
-	background: var(--a11y-surface);
+	background: var(--a11y-surface-hover);
+	color: var(--a11y-text);
+	border-left-color: var(--a11y-accent);
 }
 
 .a11y-toggle-btn[aria-pressed="true"] {
-	background: var(--a11y-accent);
-	color: var(--a11y-accent-text);
-	border-color: var(--a11y-accent);
+	background: var(--a11y-surface-hover);
+	color: var(--a11y-accent);
+	border-left-color: var(--a11y-accent);
+	font-weight: 600;
 }
 
 .a11y-reset-btn {
 	width: 100%;
-	border: 1px solid var(--a11y-border);
-	background: transparent;
+	border: 2px solid var(--a11y-text);
 	border-radius: var(--a11y-radius-sm);
-	padding: 0.5rem;
+	background: var(--a11y-surface);
+	padding: 0.5rem 0.9rem;
 	font-size: 0.9rem;
-	font-weight: 500;
-	color: var(--a11y-text-muted);
+	font-weight: 600;
+	letter-spacing: var(--a11y-tracking, -0.02em);
+	color: var(--a11y-text);
 	cursor: pointer;
-	transition: color 0.15s ease, border-color 0.15s ease;
+	box-shadow: 3px 3px 0 var(--a11y-text);
+	transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .a11y-reset-btn:hover,
 .a11y-reset-btn:focus-visible {
-	color: var(--a11y-accent);
-	border-color: var(--a11y-accent);
+	background: var(--a11y-accent);
+	color: var(--a11y-accent-text);
+}
+
+.a11y-reset-btn:active {
+	box-shadow: none;
+	transform: translate(3px, 3px);
 }
 
 /* --------------------------------------------------------------------------
@@ -328,6 +438,13 @@ html.a11y-contrast body a:not(#a11y-toolbar a, #a11y-trigger *):focus {
 
 html.a11y-contrast body img {
 	border: 1px solid var(--a11y-contrast-text) !important;
+}
+
+/* Form controls stay visible and editable in high contrast */
+html.a11y-contrast body :is(input, textarea, select, button):not(#a11y-toolbar *, #a11y-trigger *) {
+	background-color: var(--a11y-contrast-bg) !important;
+	color: var(--a11y-contrast-text) !important;
+	border: 2px solid var(--a11y-contrast-text) !important;
 }
 
 html.a11y-contrast body :is(a, button, input, textarea, select):not(#a11y-toolbar *, #a11y-trigger *) {
@@ -514,7 +631,7 @@ html.a11y-dyslexia body *:not(#a11y-toolbar, #a11y-toolbar *, #a11y-trigger, #a1
 	.a11y-trigger {
 		width: 3rem;
 		height: 3rem;
-		border-radius: 50%;
+		border-radius: var(--a11y-radius) var(--a11y-radius) 0 0;
 		padding: 0;
 		justify-content: center;
 		gap: 0;
@@ -537,7 +654,7 @@ html.a11y-dyslexia body *:not(#a11y-toolbar, #a11y-toolbar *, #a11y-trigger, #a1
 		width: 100%;
 		max-width: 100%;
 		max-height: 65vh;
-		border-radius: 16px 16px 0 0;
+		border-radius: var(--a11y-radius) var(--a11y-radius) 0 0;
 		border-left: none;
 		border-right: none;
 		border-bottom: none;
@@ -551,18 +668,13 @@ html.a11y-dyslexia body *:not(#a11y-toolbar, #a11y-toolbar *, #a11y-trigger, #a1
 	}
 
 	.a11y-toggle-grid {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 0.5rem;
-	}
-
-	.a11y-toggle-grid .a11y-group {
-		margin-bottom: 0;
+		display: flex;
+		flex-direction: column;
 	}
 
 	.a11y-toggle-btn {
 		font-size: 0.8rem;
-		padding: 0.5rem 0.6rem;
+		padding: 0.5rem 0.4rem 0.5rem 0.2rem;
 		gap: 0.4rem;
 		min-height: 44px;
 	}

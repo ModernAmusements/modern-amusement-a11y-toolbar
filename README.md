@@ -7,6 +7,8 @@ Free for non-profit organizations. Commercial use requires a commercial license 
 
 Demonstration & config playground: [demo/index.html](demo/index.html) — open locally with `npx serve .` and visit `/demo/`.
 
+![Modern Amusement Accessibility Toolbar](demo/MA-A11Y-POSTER.png)
+
 | Desktop panel | Mobile bottom sheet |
 |---|---|
 | ![Desktop panel](docs/screenshot-desktop.png) | ![Mobile bottom sheet](docs/screenshot-mobile.png) |
@@ -124,7 +126,7 @@ Colors can be set in the JS config (`colors`) **or** as plain CSS custom propert
   --a11y-backdrop: rgba(0, 0, 0, 0.4);
   --a11y-radius: 12px;
   --a11y-radius-sm: 8px;
-  --a11y-font-ui: 'Inter', system-ui, sans-serif;
+  --a11y-font-ui: 'Bricolage Grotesque', system-ui, sans-serif;
   --a11y-font-dyslexia: 'OpenDyslexic', sans-serif;
   --a11y-z: 2147483000;
   --a11y-side: 1.5rem;
@@ -141,6 +143,17 @@ Colors can be set in the JS config (`colors`) **or** as plain CSS custom propert
 `--a11y-base-filter` is set automatically when the page itself uses a CSS `filter` on `<html>` and invert/grayscale is active, so the site filter is preserved.
 
 For a custom font, load it yourself (`@font-face` or a font service) and point `fonts.ui` / `fonts.dyslexia` (or the CSS variables) at it.
+
+## Default theme
+
+The shipped default theme follows the Modern Amusement design tokens (Bielefeld):
+
+- **Colors — warm brown:** solid background `#F1ECE8`, text `#4B1800`, accent `#754D3A`, hover `#DCD1CB`, borders `#C7B7AE`.
+- **Typography — Bricolage Grotesque** (self-hosted variable font, SIL OFL 1.1, weights 200–800): base `1rem` / line-height `1.5` / tracking `-0.02em`; titles `600`, badges and labels `600`, buttons `500`; the font-size value renders in a mono stack. No uppercase transforms, no positive letter-spacing, `-webkit-font-smoothing: antialiased`.
+- **Layout — Bielefeld primitives, rendered minimal/brutalist:** a section header (badge pill + title) with a hard `2px` bottom line (`.content-section-header` pattern), font-size controls as square `2px`-outlined buttons, the 13 toggles as **line-separated rows** with a hard `4px` left accent when active, a full-width reset button, hard 2px panel outline and hard offset shadows (`8px 8px` panel, `3px 3px` controls). No glass, no rounded corners (badge pill `99px` is the only radius by default; both radius variables are configurable).
+- **Spacing rhythm:** 4/8/12/16/20/24/32/48.
+
+Everything above is overridable per integration via the `colors`/`fonts` options or the CSS variables.
 
 ## Labels / i18n
 
@@ -226,6 +239,7 @@ npm test
 - `tests/browser.test.js` — full UI suite in real Chrome: all 13 tools, contrast/invert/grayscale behavior, theming, persistence, reset, Escape, focus, mobile bottom sheet, config playground.
 - `tests/api.test.js` — JS API: manual init, external trigger, toggle subsets, `setPrefs`/`reset`, destroy cleanup, re-init, full theming.
 - `tests/scope.test.js` — font-scale mode detection (root vs zoom), same-origin iframe and open Shadow DOM propagation, root filter composition.
+- `tests/edge.test.js` — early init before the body exists, double init, empty toggle lists, missing trigger, corrupt/out-of-range/blocked storage, focus trap, RTL, contrast on form controls, degenerate fontScale config.
 
 The suite auto-detects Chrome/Chromium; set `CHROME_PATH` to a browser binary if needed. CI runs the same suite on every push and pull request (`.github/workflows/tests.yml`).
 
@@ -357,7 +371,7 @@ Farben lassen sich in der JS-Konfiguration (`colors`) **oder** als reine CSS-Cus
   --a11y-backdrop: rgba(0, 0, 0, 0.4);
   --a11y-radius: 12px;
   --a11y-radius-sm: 8px;
-  --a11y-font-ui: 'Inter', system-ui, sans-serif;
+  --a11y-font-ui: 'Bricolage Grotesque', system-ui, sans-serif;
   --a11y-font-dyslexia: 'OpenDyslexic', sans-serif;
   --a11y-z: 2147483000;
   --a11y-side: 1.5rem;
@@ -374,6 +388,17 @@ Farben lassen sich in der JS-Konfiguration (`colors`) **oder** als reine CSS-Cus
 `--a11y-base-filter` wird automatisch gesetzt, wenn die Seite selbst einen CSS-`filter` auf `<html>` nutzt und Invert/Graustufen aktiv ist — so bleibt der Seiten-Filter erhalten.
 
 Für eine eigene Schrift diese selbst laden (`@font-face` oder Font-Dienst) und `fonts.ui` / `fonts.dyslexia` (oder die CSS-Variablen) darauf zeigen lassen.
+
+### Standard-Theme
+
+Das ausgelieferte Standard-Theme folgt den Modern-Amusement-Design-Tokens (Bielefeld):
+
+- **Farben — warmes Braun:** solide Fläche `#F1ECE8`, Text `#4B1800`, Akzent `#754D3A`, Hover `#DCD1CB`, Rahmen `#C7B7AE`.
+- **Typografie — Bricolage Grotesque** (selbst gehostete Variable Font, SIL OFL 1.1, Schnitte 200–800): Basis `1rem` / Zeilenhöhe `1.5` / Laufweite `-0.02em`; Titel `600`, Badges und Labels `600`, Buttons `500`; der Schriftgrößen-Wert rendert in einem Mono-Stack. Keine Uppercase-Transforms, keine positive Laufweite, `-webkit-font-smoothing: antialiased`.
+- **Layout — Bielefeld-Primitives, minimal/brutalistisch umgesetzt:** Sektions-Header (Badge-Pill + Titel) mit harter `2px`-Unterlinie (`.content-section-header`-Muster), Schriftgrößen-Controls als eckige Buttons mit `2px`-Outline, die 13 Toggles als **zeilengetrennte Rows** mit hartem `4px`-Linksakzent im aktiven Zustand, full-width Reset-Button, harte `2px`-Panel-Kontur und harte Offset-Schatten (`8px 8px` Panel, `3px 3px` Controls). Kein Glass, keine Rundungen (nur die Badge-Pill `99px` als Standard-Radius; beide Radius-Variablen sind konfigurierbar).
+- **Abstands-Rhythmus:** 4/8/12/16/20/24/32/48.
+
+Alles oben ist pro Integration über `colors`/`fonts` oder die CSS-Variablen übersteuerbar.
 
 ### Beschriftungen / i18n
 
@@ -459,6 +484,7 @@ npm test
 - `tests/browser.test.js` — vollständige UI-Suite in echtem Chrome: alle 13 Werkzeuge, Kontrast-/Invert-/Graustufen-Verhalten, Theming, Persistenz, Reset, Escape, Fokus, mobiles Bottom-Sheet, Konfigurations-Playground.
 - `tests/api.test.js` — JS-API: manuelles Init, externer Trigger, Toggle-Teilmenge, `setPrefs`/`reset`, Destroy-Aufräumen, Re-Init, vollständiges Theming.
 - `tests/scope.test.js` — Erkennung des Schrift-Skalierungsmodus (root vs. zoom), Übertragung auf Same-Origin-iframes und offenes Shadow DOM, Komposition des Root-Filters.
+- `tests/edge.test.js` — frühes Init vor existierendem Body, Doppel-Init, leere Toggle-Listen, fehlender Trigger, korrupter/gesperrter Storage, Fokus-Trap, RTL, Kontrast auf Formular-Controls, degenerierte fontScale-Konfiguration.
 
 Die Suite erkennt Chrome/Chromium automatisch; bei Bedarf `CHROME_PATH` auf ein Browser-Binary setzen. Die CI führt dieselbe Suite bei jedem Push und Pull Request aus (`.github/workflows/tests.yml`).
 

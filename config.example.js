@@ -72,29 +72,31 @@ window.A11yToolbarConfig = {
 	   any client-side tool (browser security). */
 	scope: { iframes: true, shadowDom: true },
 
-	/* Brand colors — applied as CSS custom properties on <html>. */
+	/* Brand colors — applied as CSS custom properties on <html>.
+	   Defaults are the Modern Amusement warm-brown palette. */
 	colors: {
-		accent: '#e8622c',          /* active buttons, borders, hover */
-		accentText: '#ffffff',      /* text on accent */
-		surface: '#ffffff',         /* panel background */
-		surfaceHover: '#f1ece1',    /* button background */
-		text: '#1a1a1a',
-		textMuted: '#5c5c5c',
-		border: '#e2e2e2',
-		focus: '#16294f',           /* focus-ring mode outline */
+		accent: '#754d3a',          /* active buttons, borders, hover */
+		accentText: '#f1ece8',      /* text on accent */
+		surface: '#f1ece8',         /* panel background */
+		surfaceHover: '#dcd1cb',    /* button background */
+		text: '#4b1800',
+		textMuted: '#754d3a',
+		border: '#c7b7ae',
+		focus: '#4b1800',           /* focus-ring mode outline */
 		highlight: '#ffff00',       /* link/heading highlight mode */
 		highlightText: '#000000',
 		readingGuide: '#ffd54f',    /* reading guide borders */
 		readingGuideBg: 'rgba(255, 213, 79, 0.35)',
 		backdrop: 'rgba(0, 0, 0, 0.4)',
-		radius: '12px',
-		radiusSm: '8px'
+		radius: '0px',      /* brutalist: square; badge pill stays 99px */
+		radiusSm: '0px'
 	},
 
-	/* Fonts. Load your webfont separately (e.g. @font-face) and reference it
-	   here. OpenDyslexic ships with the toolbar (fonts/opendyslexic/). */
+	/* Fonts. Bricolage Grotesque (200–800, OFL) ships with the toolbar and is
+	   the default UI font; OpenDyslexic ships for the dyslexia toggle. Load
+	   any other webfont yourself (@font-face) and reference it here. */
 	fonts: {
-		ui: '',        /* panel/settings font-family; empty = system stack */
+		ui: '',        /* panel/settings font-family; empty = Bricolage Grotesque stack */
 		dyslexia: ''   /* dyslexia mode font-family; empty = OpenDyslexic stack */
 	},
 

@@ -120,7 +120,7 @@ const { findChrome, createReporter, sleep } = require('./helpers');
 			});
 		});
 		const custom = await page.evaluate(() => ({
-			accent: getComputedStyle(document.getElementById('a11y-trigger')).borderColor,
+			accent: getComputedStyle(document.querySelector('.a11y-badge')).backgroundColor,
 			radius: getComputedStyle(document.getElementById('a11y-toolbar')).borderRadius,
 			title: document.querySelector('.a11y-title').textContent,
 			triggerText: document.querySelector('.a11y-trigger-label').textContent,

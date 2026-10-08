@@ -3,6 +3,15 @@
 All notable changes to this project are documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.2.0] — 2026-10-08
+
+### Added
+- Default theme per Modern Amusement / Bielefeld design tokens, rendered **minimal / brutalist**: warm-brown solid palette (background `#F1ECE8`, text `#4B1800`, accent `#754D3A`, hover `#DCD1CB`, borders `#C7B7AE`), hard `2px` lines, square corners (badge pill `99px` only), hard offset shadows, line-separated toggle rows with a `4px` left accent, section-header layout (badge + title + hard bottom line). No glass.
+- Bundled **Bricolage Grotesque** variable font (SIL OFL 1.1, 200–800, latin + latin-ext) as the default UI font, with the full Bielefeld typography tokens (tracking `-0.02em`, weights 600/600/500, mono stack for the size value, antialiasing).
+- Assets: poster, wordmark, logo and favicon added to `docs/` and `demo/`; poster shown in the README.
+- Edge-case hardening: deferred init when called before the body exists, focus trap inside the open panel, RTL-safe `text-align: start`, contrasting styles for form controls in high-contrast mode.
+- New test suite `tests/edge.test.js` (early init, double init, empty toggles, missing trigger, corrupt/out-of-range/blocked storage, focus trap, RTL, form-control contrast, degenerate fontScale).
+
 ## [1.1.0] — 2026-10-08
 
 ### Added

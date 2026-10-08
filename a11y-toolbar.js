@@ -37,7 +37,7 @@
 })(typeof self !== 'undefined' ? self : this, function (root) {
 	'use strict';
 
-	var VERSION = '1.1.0';
+	var VERSION = '1.2.0';
 
 	var TOGGLE_IDS = [
 		'contrast',
@@ -264,9 +264,9 @@
 			return TOGGLE_IDS.indexOf(id) !== -1;
 		});
 
-		config.fontScale.start = clamp(config.fontScale.start, config.fontScale.min, config.fontScale.max);
 		config.fontScale.min = clamp(config.fontScale.min, 40, 200);
 		config.fontScale.max = clamp(config.fontScale.max, config.fontScale.min, 300);
+		config.fontScale.start = clamp(config.fontScale.start, config.fontScale.min, config.fontScale.max);
 		config.fontScale.step = clamp(config.fontScale.step, 1, 100);
 		if (config.fontScale.mode !== 'root' && config.fontScale.mode !== 'zoom') {
 			config.fontScale.mode = 'auto';
@@ -383,6 +383,7 @@
 			s('a11y-contrast') + ' *:not(style) { background-color: transparent !important; background-image: none !important; color: #000000 !important; border-color: #000000 !important; box-shadow: none !important; text-shadow: none !important; }',
 			s('a11y-contrast') + ' a { color: #0000ee !important; text-decoration: underline !important; }',
 			s('a11y-contrast') + ' img { border: 1px solid #000000 !important; }',
+			s('a11y-contrast') + ' :is(input, textarea, select, button) { background-color: #ffffff !important; color: #000000 !important; border: 2px solid #000000 !important; }',
 			s('a11y-underline-links') + ' a { text-decoration: underline !important; text-underline-offset: 3px; }',
 			s('a11y-highlight-links') + ' a { background-color: #ffff00 !important; color: #000000 !important; text-decoration: underline !important; }',
 			headings + ' { background-color: #ffff00 !important; color: #000000 !important; box-shadow: 0 0 0 4px #ffff00 !important; }',
@@ -715,7 +716,10 @@
 			text: '\u00d7'
 		});
 		panel.appendChild(el('div', { 'class': 'a11y-header' }, [
-			el('span', { 'class': 'a11y-title', text: labels.title }),
+			el('div', { 'class': 'a11y-heading' }, [
+				el('span', { 'class': 'a11y-badge', 'aria-hidden': 'true' }, [iconSvg('accessibility')]),
+				el('span', { 'class': 'a11y-title', text: labels.title })
+			]),
 			closeBtn
 		]));
 
@@ -810,7 +814,27 @@
 		state.bound.closeClick = function () { closePanel(); };
 		state.bound.backdropClick = function () { closePanel(); };
 		state.bound.panelKeydown = function (e) {
-			if (e.key === 'Escape') closePanel();
+			if (e.key === 'Escape') {
+				closePanel();
+				return;
+			}
+			if (e.key !== 'Tab') return;
+			/* Focus trap: keep keyboard focus inside the open panel. */
+			var focusables = panel.querySelectorAll('button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+			if (!focusables.length) return;
+			var first = focusables[0];
+			var last = focusables[focusables.length - 1];
+			var active = document.activeElement;
+			var inside = panel.contains(active);
+			if (e.shiftKey) {
+				if (active === first || !inside) {
+					e.preventDefault();
+					last.focus();
+				}
+			} else if (active === last || !inside) {
+				e.preventDefault();
+				first.focus();
+			}
 		};
 		state.bound.fontDownClick = function () {
 			state.prefs.fontScale = clamp(state.prefs.fontScale - config.fontScale.step, config.fontScale.min, config.fontScale.max);
@@ -953,6 +977,17 @@
 	 * ---------------------------------------------------------------- */
 
 	function init(options) {
+		if (typeof document === 'undefined') return api; /* non-DOM environment */
+		if (document.readyState === 'loading' && !document.body) {
+			/* Called from a <head> script before the body exists: defer. */
+			var pending = options;
+			var onReady = function () {
+				document.removeEventListener('DOMContentLoaded', onReady);
+				init(pending);
+			};
+			document.addEventListener('DOMContentLoaded', onReady);
+			return api;
+		}
 		if (state) destroy();
 		var config = normalizeConfig(options);
 		state = {

@@ -40,8 +40,41 @@ const { findChrome, createReporter, sleep } = require('./helpers');
 
 		report.log('trigger rendered', !!(await page.$('#a11y-trigger')));
 
-		const borderColor = await page.$eval('#a11y-trigger', (el) => getComputedStyle(el).borderColor);
-		report.log('config accent applied', borderColor.includes('10, 125, 85'), borderColor);
+		const badgeColor = await page.$eval('.a11y-badge', (el) => getComputedStyle(el).backgroundColor);
+		report.log('config accent applied', badgeColor.includes('117, 77, 58'), badgeColor);
+
+	const brandTheme = await page.evaluate(() => ({
+		surface: getComputedStyle(document.getElementById('a11y-toolbar')).backgroundColor,
+		backdrop: getComputedStyle(document.getElementById('a11y-toolbar')).backdropFilter,
+		text: getComputedStyle(document.querySelector('.a11y-title')).color,
+		panelRadius: getComputedStyle(document.getElementById('a11y-toolbar')).borderRadius,
+		toggleRadius: getComputedStyle(document.querySelector('.a11y-toggle-btn')).borderRadius
+	}));
+	const surfaceOk = brandTheme.surface === 'rgb(241, 236, 232)';
+	report.log('default brand theme (#F1ECE8 solid / #4B1800 text)', surfaceOk && brandTheme.text === 'rgb(75, 24, 0)', JSON.stringify(brandTheme));
+	report.log('no glass: solid surface without backdrop-filter', brandTheme.backdrop === 'none', brandTheme.backdrop);
+	report.log('brutalist radius: panel 0 / toggles 0', brandTheme.panelRadius === '0px' && brandTheme.toggleRadius === '0px', brandTheme.panelRadius + ' / ' + brandTheme.toggleRadius);
+
+	const badge = await page.$('.a11y-badge');
+	report.log('section-header badge pill rendered', !!badge);
+	const rowDividers = await page.evaluate(() => {
+		const btns = document.querySelectorAll('.a11y-toggle-btn');
+		const first = getComputedStyle(btns[0]);
+		const last = getComputedStyle(btns[btns.length - 1]);
+		return { firstUnder: first.borderBottomWidth, lastUnder: last.borderBottomWidth, left: first.borderLeftWidth };
+	});
+	report.log('toggle rows: line separators + left accent slot', rowDividers.firstUnder !== '0px' && rowDividers.lastUnder === '0px' && rowDividers.left === '4px', JSON.stringify(rowDividers));
+
+	const uiFont = await page.evaluate(async () => {
+		await document.fonts.ready;
+		return {
+			family: getComputedStyle(document.querySelector('.a11y-title')).fontFamily,
+			loaded: document.fonts.check('16px "Bricolage Grotesque"'),
+			tracking: parseFloat(getComputedStyle(document.querySelector('.a11y-title')).letterSpacing)
+		};
+	});
+	report.log('default UI font is Bricolage Grotesque', uiFont.family.includes('Bricolage Grotesque') && uiFont.loaded, uiFont.family);
+	report.log('Bielefeld typography tracking applied (negative em)', !isNaN(uiFont.tracking) && uiFont.tracking < 0, String(uiFont.tracking));
 
 		const triggerText = await page.$eval('#a11y-trigger .a11y-trigger-label', (el) => el.textContent);
 		report.log('trigger text default EN', triggerText === 'Accessibility', triggerText);
@@ -105,10 +138,10 @@ const { findChrome, createReporter, sleep } = require('./helpers');
 		await page.click('#a11y-toggle-highlightHeadings');
 
 		/* --- letter spacing --- */
-		const spacingBefore = await page.evaluate(() => getComputedStyle(document.querySelector('.demo-hero p')).letterSpacing);
+		const spacingBefore = parseFloat(await page.evaluate(() => getComputedStyle(document.querySelector('.demo-hero p')).letterSpacing));
 		await page.click('#a11y-toggle-letterSpacing');
-		const spacingAfter = await page.evaluate(() => getComputedStyle(document.querySelector('.demo-hero p')).letterSpacing);
-		report.log('letter spacing: increased', spacingBefore === 'normal' && spacingAfter !== 'normal' && spacingAfter !== '0px', spacingBefore + ' -> ' + spacingAfter);
+		const spacingAfter = parseFloat(await page.evaluate(() => getComputedStyle(document.querySelector('.demo-hero p')).letterSpacing));
+		report.log('letter spacing: increased', !isNaN(spacingAfter) && spacingAfter > spacingBefore, spacingBefore + ' -> ' + spacingAfter);
 		await page.click('#a11y-toggle-letterSpacing');
 
 		/* --- line height --- */
@@ -205,7 +238,7 @@ const { findChrome, createReporter, sleep } = require('./helpers');
 		await page.select('#c-language', 'en');
 		await page.evaluate(() => document.getElementById('cfg-apply').click());
 		await sleep(350);
-		const accentApplied = await page.$eval('#a11y-trigger', (el) => getComputedStyle(el).borderColor);
+		const accentApplied = await page.$eval('.a11y-badge', (el) => getComputedStyle(el).backgroundColor);
 		const posAttr = await page.evaluate(() => document.documentElement.getAttribute('data-a11y-position'));
 		const triggerRect = await page.$eval('#a11y-trigger', (el) => { const r = el.getBoundingClientRect(); return { left: r.left, vw: innerWidth }; });
 		report.log('playground: accent re-themed live', accentApplied.includes('109, 40, 217'), accentApplied);
@@ -226,7 +259,7 @@ const { findChrome, createReporter, sleep } = require('./helpers');
 			const r = el.getBoundingClientRect();
 			return { w: Math.round(r.width), h: Math.round(r.height), radius: getComputedStyle(el).borderRadius };
 		});
-		report.log('mobile: trigger is 48px circle', triggerSize.w === 48 && triggerSize.h === 48 && triggerSize.radius.includes('50%'), JSON.stringify(triggerSize));
+		report.log('mobile: trigger is 48px square (brutalist)', triggerSize.w === 48 && triggerSize.h === 48 && triggerSize.radius === '0px', JSON.stringify(triggerSize));
 
 		await mobile.click('#a11y-trigger');
 		await sleep(450);
@@ -236,8 +269,8 @@ const { findChrome, createReporter, sleep } = require('./helpers');
 		});
 		report.log('mobile: full-width bottom sheet', sheet.w === 390 && sheet.bottomGap === 0 && sheet.left === 0, JSON.stringify(sheet));
 
-		const gridCols = await mobile.$eval('.a11y-toggle-grid', (el) => getComputedStyle(el).gridTemplateColumns.split(' ').length);
-		report.log('mobile: toggle grid = 2 columns', gridCols === 2, String(gridCols));
+		const gridLayout = await mobile.$eval('.a11y-toggle-grid', (el) => ({ display: getComputedStyle(el).display, direction: getComputedStyle(el).flexDirection }));
+		report.log('mobile: toggle rows stay single column', gridLayout.display === 'flex' && gridLayout.direction === 'column', JSON.stringify(gridLayout));
 
 		const backdropVisible = await mobile.$eval('#a11y-backdrop', (el) => getComputedStyle(el).display !== 'none');
 		report.log('mobile: backdrop visible', backdropVisible);
