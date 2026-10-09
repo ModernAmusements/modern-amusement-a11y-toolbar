@@ -26,6 +26,6 @@
     "site-rebuilder": { "mode": "subagent", "prompt": "{file:.opencode/agents/site-rebuilder.md}" },
     "wcag-auditor": { "mode": "subagent", "prompt": "{file:.opencode/agents/wcag-auditor.md}" },
     "lottie-animator": { "mode": "subagent", "prompt": "{file:.opencode/agents/lottie-animator.md}" },
-    "credentials-agent": { "mode": "subagent", "prompt": "{file:agents/credentials-agent.md}" }
+    "credentials-agent": { "mode": "subagent", "prompt": "{file:.opencode/agents/credentials-agent.md}" }
   }
 }
