@@ -17,6 +17,8 @@
 	"homepage": "https://modern-amusement.dev/de",
 	"main": "a11y-toolbar.js",
 	"style": "a11y-toolbar.css",
+	"unpkg": "a11y-toolbar.js",
+	"jsdelivr": "a11y-toolbar.js",
 	"files": [
 		"a11y-toolbar.js",
 		"a11y-toolbar.css",
@@ -29,6 +31,8 @@
 	],
 	"scripts": {
 		"demo": "npx --yes serve .",
+		"prepublishOnly": "npm test",
+		"screenshots": "node tests/screenshots.js",
 		"test": "node tests/config.test.js && node tests/browser.test.js && node tests/api.test.js && node tests/scope.test.js && node tests/edge.test.js",
 		"test:config": "node tests/config.test.js",
 		"test:browser": "node tests/browser.test.js",
