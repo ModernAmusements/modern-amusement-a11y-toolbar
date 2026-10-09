@@ -1,8 +1,8 @@
 # CONTEXT — Modern Amusement Accessibility Toolbar
 
 > **Single source of truth für dieses Produkt-Repo.** Immer zuerst lesen.
-> Stand: 2026-10-09 (Session: White-Label-Default + Deploy, v1.3.0) · Nächste Aktualisierung nach jeder Session Pflicht.
-> Letzter Stand: v1.3.0 — `whitelabel.css` (neutrales Default-Theme, ausschließlich Alliance No.1), `globals.css` (Native-Input-Layer + Content-Elemente), `demo/whitelabel.html` (80-Elemente-Inventar + Playground), 90/90, CI grün, Tag `v1.3.0`.
+> Stand: 2026-10-09 (2) · Session: README-Screenshots White-Label-Minimal, Credentials-Agent, npm-Publish-Anlauf · Nächste Aktualisierung nach jeder Session Pflicht.
+> Letzter Stand: v1.3.0 — `whitelabel.css` (neutrales Default-Theme, ausschließlich Alliance No.1), `globals.css` (Native-Input-Layer + Content-Elemente), `demo/whitelabel.html` (80-Elemente-Inventar + Playground), 90/90, CI grün, Tag `v1.3.0`. **npm-Publish 1.3.0 vorbereitet, aber npm-Account temporär gesperrt (siehe Session (2)).**
 
 ---
 
@@ -28,7 +28,8 @@
 - `demo/whitelabel.html` — White-Label-Demo: Logo/Wordmark-Header, Hero, Stats, A11y-Testflächen, 80-Elemente-Inventar (30 + 50), Native-Control-Galerie, Config-Playground (Thema: `whitelabel.css`).
 - `docs/` — `MA-A11Y-POSTER.png`, `ma_a11y-wordmark.svg`, `ma_a11y-logo.svg`, `favicon.svg`, Screenshots.
 - `fonts/` — `bricolage-grotesque/` + `opendyslexic/` (beide SIL OFL 1.1, je `OFL.txt`).
-- `tests/` — 5 Suiten + `static-server.js`, `helpers.js`, `fixtures/`.
+- `tests/` — 5 Suiten + `static-server.js`, `helpers.js`, `fixtures/`, `screenshots.js` (README-Screenshot-Generator, `npm run screenshots`).
+- `agents/credentials-agent.md` — **getrackter** OpenCode-Agent (bewusst außerhalb `.opencode/`): Auth/Publishing-Regeln, Credential-Orte, npm-Runbook; enthält **keine Secrets**.
 - `.github/workflows/tests.yml` — CI (npm test, Chrome for Testing via `@puppeteer/browsers`).
 - `opencode.json` + `.opencode/agents/` — lokale OpenCode-Agents (aus dem Modern-Amusement-Pool kopiert, **gitignored** über `.opencode/` — niemals committen). Registriert: webdev-expert (primary), seo/accessibility/performance/security/qa/devops/content/ux/projektmanagement/site-rebuilder/wcag/lottie.
 
@@ -46,6 +47,15 @@
 10. **Root-Designsystem `globals.css`:** Native-Input-Layer + Content-Elemente komplett via `:where()` (Specificity 0), damit `.filter-input`/`.btn`/Inline-Styles gewinnen; alle Vendor-Pseudos abgedeckt (Kalender-Picker, File-Button, Spinner, Search-Cancel, Range-Thumb/Track, Color-Swatches, Progress/Meter); date/time behalten native Picker (`appearance: none` dort bewusst NICHT gesetzt); ausschließlich Alliance No.1.
 
 ## 4. Sessions
+
+### Session 2026-10-09 (2) — README-Screenshots (White-Label-Minimal), Credentials-Agent, npm-Publish-Anlauf
+- **Screenshots neu:** `tests/screenshots.js` (Puppeteer; Desktop 1440×900@2x, Mobile 390×844@2x, gegen `demo/whitelabel.html`; verifiziert Panel-Geometrie, White-Label-Computed-Styles, Alliance-Font, 13 Rows, Overflow **vor** dem Schreiben) + `npm run screenshots`; `docs/screenshot-desktop.png`/`docs/screenshot-mobile.png` ersetzt (vorher Brutalist-Braun, jetzt Weiß/1px-Linien). Commit `d32a925`.
+- **npm-Packaging:** `package.json` um `unpkg`/`jsdelivr` (a11y-toolbar.js) + `prepublishOnly: npm test` + `screenshots`-Script ergänzt (in `d32a925`). Name auf npm frei; Tarball 158 kB / 14 Dateien; Tests 90/90.
+- **Credentials-Agent:** `agents/credentials-agent.md` bewusst **getrackt** (nicht `.opencode/`), in `opencode.json` registriert, in AGENTS.md dokumentiert — nur Orte/Regeln, keine Secrets. Commit `326cfa7`.
+- **npm-Publish-Anlauf (blockiert):** npm verlangt seit Juli 2026 interaktive 2FA für Publish/Token-Erstellung (Bypass-2FA-Direktpublish läuft Jan 2027 aus). Account `modern-amusement` (heute angelegt) hat jetzt 2FA `auth-and-writes`; Token in `~/.npmrc` ist **stage-only** (`npm_Ytlf…`), OTP-Challenge (Recovery-Code) bestanden → dann **„account temporarily suspended due to a recent security-sensitive action"** (E403 bei `npm stage publish`). Vermutlich temporär (neuer Account + viele Security-Aktionen); **nach Entsperrung:** `npm stage publish .` → `npm stage approve <stage-id> --otp=…` (oder Direkt-Token mit Bypass).
+- **System:** globales npm (Volta) auf **11.21.0** aktualisiert (nötig für `npm token create`/`npm stage`); `~/.npmrc`-Backups: `~/.npmrc.bak.*`, `~/.npmrc.keep`, `~/.npmrc.ytlf.bak`.
+- **⚠️ Security-Cleanup offen:** npm-Passwort **und** 5 Recovery-Codes wurden im Chat gepostet → Passwort ändern, Recovery-Codes neu generieren, Zusatz-Token unter npmjs.com/settings/~/tokens revoken.
+- Working Tree sauber bis auf die bewusst untracked `layout.tsx`/`page.tsx`.
 
 ### Session 2026-10-09 (White-Label-Default + Deploy, v1.3.0)
 - Root-Dateien (`globals.css`, `layout.tsx`, `page.tsx` aus Neo-Cuneiform) als White-Label-Basis übernommen; `globals.css` um Native-Input-Layer, Content-Elemente (80 Tags), `@font-face` Alliance erweitert.
@@ -66,15 +76,17 @@
 ## 5. Offen / Nächste Schritte
 
 1. **WordPress-Plugin-Wrapper** (Settings-Seite für Farben/Schriften, Enqueue der Dateien inkl. optionalem `whitelabel.css`) — vom User als nächster Schritt angefragt.
-2. **npm-Publish** (`package.json` ist bereit, `whitelabel.css` wird mitgeliefert); CDN-Pinning-Tag `v1.3.0` ist gesetzt.
+2. **npm-Publish v1.3.0** — paketfertig (Tests 90/90, Tarball ok, Name frei, `prepublishOnly` gesetzt). Blockiert durch temporäre npm-Account-Sperre; danach: `npm stage publish .` + `npm stage approve <id> --otp=…` oder Bypass-Token. Nach erfolgreichem Publish: nutzer-**Security-Cleanup** (Passwort rotieren, Recovery-Codes neu, Token revoken). Perspektivisch `npm trust github` (Trusted Publishing/OIDC) statt Tokens.
 3. Optional: GTM-Template, README-GIF der Toolbar, `docs/BIELEFELD-LAYOUT-REPORT.md` aus dem Explore-Agent-Report ablegen.
-4. Screenshots bei Theme-Änderungen regenerieren; Haupt-Demo unverändert (v1.3.0), optional Shots für `demo/whitelabel.html`.
+4. ✅ Screenshots aktualisiert (Session (2)): `npm run screenshots` gegen `demo/whitelabel.html`; nach künftigen Theme-Änderungen erneut laufen lassen.
 5. `layout.tsx`/`page.tsx` (Neo-Cuneiform-Kopien) sind untracked — bewusst nicht committen; löschen, wenn die Referenz nicht mehr gebraucht wird.
+6. **Security**: Keine Secrets ins Repo (public). Credential-Orte und Runbooks im getrackten `agents/credentials-agent.md`; Werte nur lokal (`~/.npmrc`, Keychain, private `.env`).
 
 ## 6. Quick-Commands
 
 ```bash
 npm test                 # 5 Suiten (config, browser, api, scope, edge)
+npm run screenshots      # docs/screenshot-*.png neu generieren (Puppeteer, Chrome nötig)
 npm run demo             # npx serve -> /demo/ · /demo/whitelabel.html (White-Label-Default, 80 Elemente)
 CHROME_PATH=... npm test # falls Chrome nicht gefunden wird
 ```
