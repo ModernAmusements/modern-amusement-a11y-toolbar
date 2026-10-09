@@ -1,8 +1,8 @@
 # CONTEXT — Modern Amusement Accessibility Toolbar
 
 > **Single source of truth für dieses Produkt-Repo.** Immer zuerst lesen.
-> Stand: 2026-10-09 (Session-Ende, v1.2.0) · Nächste Aktualisierung nach jeder Session Pflicht.
-> Letzter Stand: v1.2.1 — Brutalist-Theme + Bielefeld-Layout-Primitives, Alliance No.1 (Brandfont), Logo in Nav, vertikale Linien (branding.svg), 89/89+, CI grün.
+> Stand: 2026-10-09 (Session: White-Label-Default + Deploy, v1.3.0) · Nächste Aktualisierung nach jeder Session Pflicht.
+> Letzter Stand: v1.3.0 — `whitelabel.css` (neutrales Default-Theme, ausschließlich Alliance No.1), `globals.css` (Native-Input-Layer + Content-Elemente), `demo/whitelabel.html` (80-Elemente-Inventar + Playground), 90/90, CI grün, Tag `v1.3.0`.
 
 ---
 
@@ -15,14 +15,17 @@
 | **Lokal** | `~/Desktop/modern-amusement-a11y-toolbar` |
 | **Lizenz** | Dual: **frei für gemeinnützige Organisationen**, kommerzielle Lizenz für alle anderen (siehe `LICENSE`) |
 | **Autor/Halter** | Shady Tawfik — Modern Amusement (https://modern-amusement.dev/de) |
-| **Version** | 1.2.0 (`CHANGELOG.md`) — Tags für CDN noch zu setzen |
+| **Version** | 1.3.0 (`CHANGELOG.md`), Tag `v1.3.0` für CDN-Pinning |
 
 ## 2. Struktur
 
 - `a11y-toolbar.js` — UMD-Library: Auto-Init (`A11yToolbarConfig`), JS-API (`init/destroy/open/close/getPrefs/setPrefs/reset/toggle`), Scope-Engine (same-origin iframes + open Shadow DOM via `adoptedStyleSheets`, CSP-safe), Font-Scaling auto (root/zoom), Base-Filter-Erhalt, Fokus-Trap, RTL-, Storage- & Edge-Case-Härtung.
 - `a11y-toolbar.css` — Default-Theme **minimal/brutalistisch**, alle Tokens als CSS-Vars (`--a11y-*`), self-hosted Alliance No.1 `@font-face` (Markenfont).
+- `whitelabel.css` — neutrales White-Label-Default-Theme (Schwarz/Weiß/Grau, 1px-Konturen, keine Offset-Schatten, eckiges Badge, monochrome Highlights; ausschließlich Alliance No.1). Tool-Buttons werden explizit von generischen Host-Button-Styles abgeschirmt.
+- `globals.css` — White-Label-Designsystem im Root (aus Neo-Cuneiform übernommen): Tokens, `@font-face` Alliance No.1 (self-hosted, kein Google-Fonts-Request), vollständiger Native-Input-Override-Layer via `:where()`, Content-Elemente (30 + 50 = 80 Tags); Basis für `demo/whitelabel.html`.
 - `config.example.js` — Dokumentierte Beispiel-Konfiguration.
-- `demo/index.html` — Brutalist-Demo-Seite (Bielefeld-Layout-Primitives) + Config-Playground (Customizer, EN/DE-Labels).
+- `demo/index.html` — Brutalist-Demo (MA-Theme) + Config-Playground (Customizer, EN/DE).
+- `demo/whitelabel.html` — White-Label-Demo: Logo/Wordmark-Header, Hero, Stats, A11y-Testflächen, 80-Elemente-Inventar (30 + 50), Native-Control-Galerie, Config-Playground (Thema: `whitelabel.css`).
 - `docs/` — `MA-A11Y-POSTER.png`, `ma_a11y-wordmark.svg`, `ma_a11y-logo.svg`, `favicon.svg`, Screenshots.
 - `fonts/` — `bricolage-grotesque/` + `opendyslexic/` (beide SIL OFL 1.1, je `OFL.txt`).
 - `tests/` — 5 Suiten + `static-server.js`, `helpers.js`, `fixtures/`.
@@ -39,8 +42,18 @@
 6. **Font-Scaling:** `fontScale.mode` `auto|root|zoom` — rem-Seiten per Root-Font-Size, px-Seiten per CSS `zoom`; Bereich 80–200 % (WCAG 1.4.4).
 7. **Stacking:** Default `zIndex: 2147483000`; Site-Root-`filter` wird bei invert/grayscale erfasst und komponiert (`--a11y-base-filter`), nicht überschrieben.
 8. **Edge-Cases gehärtet:** init vor `<body>`, Doppel-Init, `toggles: []`, fehlender `trigger`-Selektor, kaputter/blockierter Storage (opaque-origin = natürlicher Private-Mode-Test), Fokus-Trap, RTL (`text-align: start`, `direction` erbt), Kontrast-Styles für Formular-Controls.
+9. **White-Label-Default (v1.3.0):** `whitelabel.css` leitet Palette/Geometrie aus den Root-Tokens (`globals.css`) ab — Schwarz/Weiß/Grau, 1px-Linien, keine Offset-Schatten, eckiges Badge, monochrome Highlights/Lesehilfe. Das Tool behält **Alliance No.1** (kein IBM Plex); ein expliziter Schild (`.a11y-toolbar button`, `.a11y-trigger` → `font-family`/`text-transform: none`) verhindert, dass generische Host-Button-Styles ins Panel lecken. `--a11y-font-mono` zeigt ebenfalls auf Alliance.
+10. **Root-Designsystem `globals.css`:** Native-Input-Layer + Content-Elemente komplett via `:where()` (Specificity 0), damit `.filter-input`/`.btn`/Inline-Styles gewinnen; alle Vendor-Pseudos abgedeckt (Kalender-Picker, File-Button, Spinner, Search-Cancel, Range-Thumb/Track, Color-Swatches, Progress/Meter); date/time behalten native Picker (`appearance: none` dort bewusst NICHT gesetzt); ausschließlich Alliance No.1.
 
 ## 4. Sessions
+
+### Session 2026-10-09 (White-Label-Default + Deploy, v1.3.0)
+- Root-Dateien (`globals.css`, `layout.tsx`, `page.tsx` aus Neo-Cuneiform) als White-Label-Basis übernommen; `globals.css` um Native-Input-Layer, Content-Elemente (80 Tags), `@font-face` Alliance erweitert.
+- `whitelabel.css` als neutrales Tool-Theme erstellt (aus Root-Tokens); `demo/whitelabel.html` mit Logo/Wordmark-Header, Hero, Stats, A11y-Testflächen (Motion, Dark Surface, Farbfelder, Lesekomfort, Fokus, Links/Headings), 30+50-Elemente-Inventar, Control-Galerie und portiertem Config-Playground.
+- „Nur Alliance No.1": Google-Fonts-Import entfernt; `--font-sans`/`--font-mono` (Seite) und `--a11y-font-ui`/`--a11y-font-mono` (Tool) = Alliance.
+- Fixes im Review: `appearance: none` von date/time entfernt (mobile Picker-Affordanz), `.a11y-btn-sm`-Padding-Squish, kaputtes Section-Header-Markup in der Demo.
+- Review: 90/90 Tests, Puppeteer-Audits (Computed Styles, Vendor-Pseudos via CSSOM, Overflow desktop/390px, Font-Check, Playground-Smoke). Deploy v1.3.0 + Tag.
+- Hinweis: `layout.tsx`/`page.tsx` bleiben **untracked** (Next.js-Quellen aus Neo-Cuneiform, nicht Teil des Produkt-Repos).
 
 ### Session 2026-10-08/09 (Erstellung bis v1.2.0, Commits `d3984ab`→`e99c8d0`)
 - **v1.0.0** (`d3984ab`): Scaffold, UMD-Library, themebare CSS, Dual-License, README EN, Demo.
@@ -52,16 +65,17 @@
 
 ## 5. Offen / Nächste Schritte
 
-1. **WordPress-Plugin-Wrapper** (Settings-Seite für Farben/Schriften, Enqueue der zwei Dateien) — vom User als nächster Schritt angefragt.
-2. **npm-Publish** + **Git-Tags** (`v1.2.0`) für CDN-Pinning (jsDelivr), `package.json` ist bereit.
+1. **WordPress-Plugin-Wrapper** (Settings-Seite für Farben/Schriften, Enqueue der Dateien inkl. optionalem `whitelabel.css`) — vom User als nächster Schritt angefragt.
+2. **npm-Publish** (`package.json` ist bereit, `whitelabel.css` wird mitgeliefert); CDN-Pinning-Tag `v1.3.0` ist gesetzt.
 3. Optional: GTM-Template, README-GIF der Toolbar, `docs/BIELEFELD-LAYOUT-REPORT.md` aus dem Explore-Agent-Report ablegen.
-4. Screenshots bei Theme-Änderungen regenerieren (`/var/folders/.../opencode/a11y-shots.js`-Muster).
+4. Screenshots bei Theme-Änderungen regenerieren; Haupt-Demo unverändert (v1.3.0), optional Shots für `demo/whitelabel.html`.
+5. `layout.tsx`/`page.tsx` (Neo-Cuneiform-Kopien) sind untracked — bewusst nicht committen; löschen, wenn die Referenz nicht mehr gebraucht wird.
 
 ## 6. Quick-Commands
 
 ```bash
 npm test                 # 5 Suiten (config, browser, api, scope, edge)
-npm run demo             # npx serve -> /demo/
+npm run demo             # npx serve -> /demo/ · /demo/whitelabel.html (White-Label-Default, 80 Elemente)
 CHROME_PATH=... npm test # falls Chrome nicht gefunden wird
 ```
 

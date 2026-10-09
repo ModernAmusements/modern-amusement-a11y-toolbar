@@ -25,8 +25,11 @@ CHROME_PATH=... npm test # falls Chrome nicht automatisch gefunden wird
 |---|---|
 | `a11y-toolbar.js` | UMD-Library (Auto-Init + API + Scope-Engine) |
 | `a11y-toolbar.css` | Brutalist-Default-Theme, CSS-Vars `--a11y-*` |
+| `whitelabel.css` | Neutrales White-Label-Default-Theme (Alliance No.1, 1px-Linien, eckig) |
+| `globals.css` | White-Label-Designsystem: Tokens, Native-Input-Layer, Content-Elemente |
 | `config.example.js` | Beispiel-Konfiguration |
 | `demo/index.html` | Brutalist-Demo + Config-Playground |
+| `demo/whitelabel.html` | White-Label-Demo + Config-Playground (80-Elemente-Inventar) |
 | `docs/`, `fonts/` | Branding-Assets (Poster/Wordmark/Logo/Favicon), Alliance No.1 (Markenfont) + OpenDyslexic (OFL) |
 | `tests/` | 5 Suiten + helpers + fixtures |
 | `.github/workflows/tests.yml` | CI |

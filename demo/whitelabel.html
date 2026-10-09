@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>White-Label Default — Accessibility Toolbar</title>
+<link rel="icon" href="../docs/favicon.svg">
+<link rel="stylesheet" href="../globals.css">
+<link rel="stylesheet" href="../a11y-toolbar.css">
+<link rel="stylesheet" href="../whitelabel.css">
+<link rel="stylesheet" href="../fonts/opendyslexic/opendyslexic.css">
+<script>
+	/* White-label default: no branding, neutral theme from whitelabel.css */
+	window.A11yToolbarConfig = {
+		position: 'left',
+		credit: false
+	};
+</script>
+<script src="../a11y-toolbar.js" defer></script>
+<style>
+	/* Demo-only layout helpers for the control gallery */
+	.form-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+		gap: var(--space-lg);
+	}
+	.field {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-xs);
+	}
+	.field--wide {
+		grid-column: 1 / -1;
+	}
+	.checks {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+		gap: var(--space-sm) var(--space-lg);
+	}
+	.check {
+		display: flex;
+		align-items: center;
+		gap: var(--space-sm);
+	}
+	.inline-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-sm);
+		margin-top: var(--space-xl);
+	}
+
+	/* A11y test areas — one block per toolbar function */
+	.test-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+		gap: var(--space-lg);
+	}
+	.test-card {
+		padding: var(--space-lg);
+		border: 1px solid var(--light-gray);
+		background: var(--off-white);
+	}
+	.test-card h3 {
+		margin-top: 0;
+	}
+	.test-card > :last-child {
+		margin-bottom: 0;
+	}
+	.motion-dot {
+		display: inline-block;
+		width: 12px;
+		height: 12px;
+		margin-right: var(--space-xs);
+		background: var(--black);
+		animation: wl-pulse 1.2s ease-in-out infinite;
+	}
+	@keyframes wl-pulse {
+		0%, 100% { opacity: 1; }
+		50% { opacity: 0.1; }
+	}
+	.dark-surface {
+		padding: var(--space-md);
+		border: 1px solid var(--black);
+		background: var(--black);
+		color: var(--white);
+	}
+	.dark-surface a {
+		color: var(--white);
+	}
+	.swatches {
+		display: grid;
+		grid-template-columns: repeat(6, 1fr);
+		height: 40px;
+		border: 1px solid var(--black);
+	}
+	.swatches span {
+		display: block;
+	}
+
+	/* Element inventory (30 elements) */
+	.el-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+		gap: var(--space-md);
+	}
+	.el {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-xs);
+		padding: var(--space-md);
+		border: 1px solid var(--light-gray);
+		background: var(--white);
+	}
+	.el-tag {
+		font-family: var(--font-mono);
+		font-size: 10px;
+		letter-spacing: 0.1em;
+		color: var(--medium-gray);
+	}
+	.el-body > :first-child {
+		margin-top: 0;
+	}
+	.el-body > :last-child {
+		margin-bottom: 0;
+	}
+	.el-body {
+		min-width: 0;
+	}
+	.el-body :is(header, footer, nav, article, aside, section, search, form) {
+		padding: var(--space-xs) var(--space-sm);
+		border: 1px dashed var(--light-gray);
+	}
+	.el-body dialog[open] {
+		position: static;
+	}
+	.el-body audio {
+		width: 100%;
+	}
+	.el-body video,
+	.el-body iframe {
+		width: 100%;
+		height: 80px;
+	}
+
+	/* Header: logo + rule + wordmark */
+	.nav-brand--row {
+		flex-direction: row;
+		align-items: center;
+		gap: var(--space-sm);
+	}
+	.nav-logo,
+	.nav-wordmark {
+		height: 30px;
+		width: auto;
+		display: block;
+	}
+	.nav-rule {
+		width: 2px;
+		align-self: stretch;
+		background: var(--black);
+	}
+	.nav-brand--end {
+		align-items: flex-end;
+	}
+
+	/* Config playground */
+	.cfg-toggle {
+		position: fixed;
+		top: 72px;
+		right: 14px;
+		z-index: 120000;
+		padding: var(--space-sm) var(--space-md);
+		border: 1px solid var(--black);
+		border-radius: 0;
+		background: var(--black);
+		color: var(--white);
+		font-family: var(--font-mono);
+		font-size: 10px;
+		font-weight: 500;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		cursor: pointer;
+	}
+	.cfg-toggle:hover {
+		background: var(--white);
+		color: var(--black);
+	}
+	.cfg-panel {
+		position: fixed;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		width: 340px;
+		max-width: 92vw;
+		z-index: 119999;
+		overflow-y: auto;
+		padding: 72px 18px 26px;
+		background: var(--white);
+		border-left: 1px solid var(--black);
+		transform: translateX(105%);
+		transition: transform 0.28s ease;
+	}
+	.cfg-panel.is-open {
+		transform: translateX(0);
+	}
+	.cfg-panel h2 {
+		margin: 0 0 var(--space-xs);
+		font-size: 16px;
+	}
+	.cfg-panel h3 {
+		margin: var(--space-lg) 0 var(--space-sm);
+		font-family: var(--font-mono);
+		font-size: 10px;
+		font-weight: 600;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--medium-gray);
+	}
+	.cfg-note {
+		font-size: 12px;
+		line-height: 1.5;
+		color: var(--medium-gray);
+	}
+	.cfg-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-sm);
+		margin: 7px 0;
+	}
+	.cfg-row label {
+		flex: 1;
+	}
+	.cfg-row input[type="text"],
+	.cfg-row select {
+		width: 150px;
+		padding: 6px 8px;
+		font-size: 11px;
+	}
+	.cfg-checks {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 3px 10px;
+	}
+	.cfg-checks label {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+	.cfg-actions {
+		display: flex;
+		gap: var(--space-sm);
+		margin-top: var(--space-lg);
+	}
+	.cfg-actions button {
+		flex: 1;
+	}
+	.cfg-actions .primary {
+		background: var(--black);
+		color: var(--white);
+	}
+	.cfg-actions .primary:hover {
+		background: var(--white);
+		color: var(--black);
+	}
+	.cfg-json {
+		margin-top: var(--space-md);
+		max-height: 260px;
+		overflow: auto;
+		font-size: 10px;
+		line-height: 1.5;
+		white-space: pre-wrap;
+		word-break: break-word;
+	}
+
+	@media (max-width: 480px) {
+		.nav-logo,
+		.nav-wordmark {
+			height: 22px;
+		}
+		.nav-brand--end {
+			display: none;
+		}
+	}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+	<div class="nav-brand nav-brand--row">
+		<img class="nav-logo" src="../docs/ma_a11y-logo.svg" alt="Modern Amusement Accessibility Toolbar">
+		<span class="nav-rule" aria-hidden="true"></span>
+		<img class="nav-wordmark" src="../docs/ma_a11y-wordmark.svg" alt="">
+	</div>
+	<div class="nav-brand nav-brand--end">
+		<span class="nav-title">White-Label Default</span>
+		<span class="nav-subtitle">Accessibility Toolbar</span>
+	</div>
+</nav>
+
+<main class="main">
+
+	<section class="section">
+		<div class="section-header">
+			<h1 class="section-title">White-label default</h1>
+			<p class="section-desc">
+				A neutral starting point for client sites: Alliance No.1, black on white,
+				1px hard lines, square corners. No branding, no dependencies.
+			</p>
+		</div>
+		<p>
+			The accessibility toolbar inherits this theme through
+			<code>whitelabel.css</code> — same palette, same type, same line weight.
+		</p>
+		<div style="display: flex; flex-wrap: wrap; gap: var(--space-sm); margin-top: var(--space-lg);">
+			<a class="btn" href="#controls">View controls</a>
+			<a class="btn btn-primary" href="#toolbar">Accessibility toolbar</a>
+		</div>
+	</section>
+
+	<section class="section">
+		<div class="section-header">
+			<h2 class="section-title">Stats grid</h2>
+			<p class="section-desc">Auto-fit cards with mono values and uppercase micro labels.</p>
+		</div>
+		<div class="stats-grid">
+			<div class="stat-card"><div class="stat-value">2</div><div class="stat-label">Files to ship</div></div>
+			<div class="stat-card"><div class="stat-value">13</div><div class="stat-label">Accessibility tools</div></div>
+			<div class="stat-card"><div class="stat-value">0</div><div class="stat-label">Dependencies</div></div>
+			<div class="stat-card"><div class="stat-value">90</div><div class="stat-label">Automated checks</div></div>
+		</div>
+	</section>
+
+	<section class="section" id="content">
+		<div class="section-header">
+			<h2 class="section-title">Content elements</h2>
+			<p class="section-desc">30 different elements, all on the minimal system — headings, text, lists, table, media and disclosure. Every one reacts to the matching toolbar mode.</p>
+		</div>
+		<div class="el-grid">
+			<div class="el"><span class="el-tag">&lt;h1&gt;</span><div class="el-body"><h1>Heading 1</h1></div></div>
+			<div class="el"><span class="el-tag">&lt;h2&gt;</span><div class="el-body"><h2>Heading 2</h2></div></div>
+			<div class="el"><span class="el-tag">&lt;h3&gt;</span><div class="el-body"><h3>Heading 3</h3></div></div>
+			<div class="el"><span class="el-tag">&lt;h4&gt;</span><div class="el-body"><h4>Heading 4</h4></div></div>
+			<div class="el"><span class="el-tag">&lt;h5&gt;</span><div class="el-body"><h5>Heading 5</h5></div></div>
+			<div class="el"><span class="el-tag">&lt;h6&gt;</span><div class="el-body"><h6>Heading 6</h6></div></div>
+			<div class="el"><span class="el-tag">&lt;p&gt;</span><div class="el-body"><p>Body copy sentence.</p></div></div>
+			<div class="el"><span class="el-tag">&lt;a&gt;</span><div class="el-body"><a href="#content">Hyperlink</a></div></div>
+			<div class="el"><span class="el-tag">&lt;strong&gt;</span><div class="el-body"><strong>Strong importance</strong></div></div>
+			<div class="el"><span class="el-tag">&lt;em&gt;</span><div class="el-body"><em>Emphasis</em></div></div>
+			<div class="el"><span class="el-tag">&lt;small&gt;</span><div class="el-body"><small>Small print</small></div></div>
+			<div class="el"><span class="el-tag">&lt;mark&gt;</span><div class="el-body"><mark>Marked</mark></div></div>
+			<div class="el"><span class="el-tag">&lt;s&gt;</span><div class="el-body"><s>No longer accurate</s></div></div>
+			<div class="el"><span class="el-tag">&lt;ins&gt;</span><div class="el-body"><ins>Inserted text</ins></div></div>
+			<div class="el"><span class="el-tag">&lt;abbr&gt;</span><div class="el-body"><abbr title="Accessible Rich Internet Applications">ARIA</abbr></div></div>
+			<div class="el"><span class="el-tag">&lt;code&gt;</span><div class="el-body"><code>const a = 1;</code></div></div>
+			<div class="el"><span class="el-tag">&lt;kbd&gt;</span><div class="el-body"><kbd>Ctrl</kbd> + <kbd>K</kbd></div></div>
+			<div class="el"><span class="el-tag">&lt;samp&gt;</span><div class="el-body"><samp>Error 404</samp></div></div>
+			<div class="el"><span class="el-tag">&lt;var&gt;</span><div class="el-body"><var>fontScale</var></div></div>
+			<div class="el"><span class="el-tag">&lt;pre&gt;</span><div class="el-body"><pre>npm test</pre></div></div>
+			<div class="el"><span class="el-tag">&lt;blockquote&gt;</span><div class="el-body"><blockquote>Content first.</blockquote></div></div>
+			<div class="el"><span class="el-tag">&lt;q&gt;</span><div class="el-body"><q>Quoted text</q></div></div>
+			<div class="el"><span class="el-tag">&lt;cite&gt;</span><div class="el-body"><cite>Author, Work</cite></div></div>
+			<div class="el"><span class="el-tag">&lt;ul&gt;</span><div class="el-body"><ul><li>Item one</li><li>Item two</li></ul></div></div>
+			<div class="el"><span class="el-tag">&lt;ol&gt;</span><div class="el-body"><ol><li>Step one</li><li>Step two</li></ol></div></div>
+			<div class="el"><span class="el-tag">&lt;dl&gt;</span><div class="el-body"><dl><dt>Term</dt><dd>Definition</dd></dl></div></div>
+			<div class="el"><span class="el-tag">&lt;table&gt;</span><div class="el-body"><table class="data-table"><thead><tr><th>Key</th><th>Value</th></tr></thead><tbody><tr><td>a11y</td><td>Yes</td></tr></tbody></table></div></div>
+			<div class="el"><span class="el-tag">&lt;figure&gt;</span><div class="el-body"><figure><img src="../docs/favicon.svg" width="32" height="32" alt=""><figcaption>Brand mark</figcaption></figure></div></div>
+			<div class="el"><span class="el-tag">&lt;details&gt;</span><div class="el-body"><details><summary>Details</summary><p>Disclosure content.</p></details></div></div>
+			<div class="el"><span class="el-tag">&lt;time&gt;</span><div class="el-body"><time datetime="2026-10-09">9 October 2026</time></div></div>
+		</div>
+	</section>
+
+	<section class="section">
+		<div class="section-header">
+			<h2 class="section-title">50 more elements</h2>
+			<p class="section-desc">Landmarks, inline semantics, form controls and embedded media — 50 further elements on the same minimal system. Total inventory: 80 elements.</p>
+		</div>
+		<div class="el-grid">
+			<div class="el"><span class="el-tag">&lt;b&gt;</span><div class="el-body"><b>Bold offset</b></div></div>
+			<div class="el"><span class="el-tag">&lt;i&gt;</span><div class="el-body"><i>Idiomatic text</i></div></div>
+			<div class="el"><span class="el-tag">&lt;u&gt;</span><div class="el-body"><u>Unarticulated annotation</u></div></div>
+			<div class="el"><span class="el-tag">&lt;sub&gt;</span><div class="el-body">H<sub>2</sub>O</div></div>
+			<div class="el"><span class="el-tag">&lt;sup&gt;</span><div class="el-body">E = mc<sup>2</sup></div></div>
+			<div class="el"><span class="el-tag">&lt;dfn&gt;</span><div class="el-body"><dfn>Definition</dfn></div></div>
+			<div class="el"><span class="el-tag">&lt;data&gt;</span><div class="el-body"><data value="42">Forty-two</data></div></div>
+			<div class="el"><span class="el-tag">&lt;output&gt;</span><div class="el-body"><output>42</output></div></div>
+			<div class="el"><span class="el-tag">&lt;address&gt;</span><div class="el-body"><address>Musterstraße 1, Bielefeld</address></div></div>
+			<div class="el"><span class="el-tag">&lt;bdi&gt;</span><div class="el-body"><bdi>Isolated text</bdi></div></div>
+			<div class="el"><span class="el-tag">&lt;bdo&gt;</span><div class="el-body"><bdo dir="rtl">Reversed</bdo></div></div>
+			<div class="el"><span class="el-tag">&lt;ruby&gt;</span><div class="el-body"><ruby>漢<rp>(</rp><rt>kan</rt><rp>)</rp></ruby></div></div>
+			<div class="el"><span class="el-tag">&lt;span&gt;</span><div class="el-body"><span>Generic inline</span></div></div>
+			<div class="el"><span class="el-tag">&lt;div&gt;</span><div class="el-body"><div>Generic block</div></div></div>
+			<div class="el"><span class="el-tag">&lt;hr&gt;</span><div class="el-body"><hr></div></div>
+			<div class="el"><span class="el-tag">&lt;header&gt;</span><div class="el-body"><header>Header landmark</header></div></div>
+			<div class="el"><span class="el-tag">&lt;footer&gt;</span><div class="el-body"><footer>Footer landmark</footer></div></div>
+			<div class="el"><span class="el-tag">&lt;nav&gt;</span><div class="el-body"><nav>Nav landmark</nav></div></div>
+			<div class="el"><span class="el-tag">&lt;article&gt;</span><div class="el-body"><article>Article block</article></div></div>
+			<div class="el"><span class="el-tag">&lt;aside&gt;</span><div class="el-body"><aside>Aside block</aside></div></div>
+			<div class="el"><span class="el-tag">&lt;section&gt;</span><div class="el-body"><section>Section block</section></div></div>
+			<div class="el"><span class="el-tag">&lt;hgroup&gt;</span><div class="el-body"><hgroup><h5>Group title</h5><p>Group subtitle</p></hgroup></div></div>
+			<div class="el"><span class="el-tag">&lt;search&gt;</span><div class="el-body"><search><p>Search landmark</p></search></div></div>
+			<div class="el"><span class="el-tag">&lt;form&gt;</span><div class="el-body"><form><p>Form block</p></form></div></div>
+			<div class="el"><span class="el-tag">&lt;fieldset&gt;</span><div class="el-body"><fieldset><legend>Group</legend><p>Grouped controls</p></fieldset></div></div>
+			<div class="el"><span class="el-tag">&lt;legend&gt;</span><div class="el-body"><fieldset><legend>Legend</legend></fieldset></div></div>
+			<div class="el"><span class="el-tag">&lt;label&gt;</span><div class="el-body"><label>Label text</label></div></div>
+			<div class="el"><span class="el-tag">&lt;button&gt;</span><div class="el-body"><button type="button">Button</button></div></div>
+			<div class="el"><span class="el-tag">&lt;select&gt;</span><div class="el-body"><select><option>Choice</option></select></div></div>
+			<div class="el"><span class="el-tag">&lt;option&gt;</span><div class="el-body"><select size="2"><option>Option</option></select></div></div>
+			<div class="el"><span class="el-tag">&lt;optgroup&gt;</span><div class="el-body"><select size="3"><optgroup label="Group"><option>Item</option></optgroup></select></div></div>
+			<div class="el"><span class="el-tag">&lt;textarea&gt;</span><div class="el-body"><textarea rows="2">Text</textarea></div></div>
+			<div class="el"><span class="el-tag">&lt;input&gt;</span><div class="el-body"><input type="text" value="Value"></div></div>
+			<div class="el"><span class="el-tag">&lt;progress&gt;</span><div class="el-body"><progress max="100" value="40"></progress></div></div>
+			<div class="el"><span class="el-tag">&lt;meter&gt;</span><div class="el-body"><meter min="0" max="100" value="60"></meter></div></div>
+			<div class="el"><span class="el-tag">&lt;dialog&gt;</span><div class="el-body"><dialog open>Dialog</dialog></div></div>
+			<div class="el"><span class="el-tag">&lt;menu&gt;</span><div class="el-body"><menu><li>One</li><li>Two</li></menu></div></div>
+			<div class="el"><span class="el-tag">&lt;canvas&gt;</span><div class="el-body"><canvas width="120" height="40">Fallback</canvas></div></div>
+			<div class="el"><span class="el-tag">&lt;svg&gt;</span><div class="el-body"><svg width="120" height="40" role="img" aria-label="SVG rectangle"><rect x="1" y="1" width="118" height="38" fill="none" stroke="#000000" stroke-width="2"/></svg></div></div>
+			<div class="el"><span class="el-tag">&lt;iframe&gt;</span><div class="el-body"><iframe srcdoc="<p style='margin:0'>Inline frame</p>" title="Inline frame demo"></iframe></div></div>
+			<div class="el"><span class="el-tag">&lt;video&gt;</span><div class="el-body"><video controls muted playsinline aria-label="Video element demo"></video></div></div>
+			<div class="el"><span class="el-tag">&lt;audio&gt;</span><div class="el-body"><audio controls aria-label="Audio element demo"></audio></div></div>
+			<div class="el"><span class="el-tag">&lt;picture&gt;</span><div class="el-body"><picture><source srcset="../docs/favicon.svg" type="image/svg+xml"><img src="../docs/favicon.svg" width="32" height="32" alt=""></picture></div></div>
+			<div class="el"><span class="el-tag">&lt;object&gt;</span><div class="el-body"><object type="image/svg+xml" data="../docs/favicon.svg" width="32" height="32" aria-label="Object element demo"></object></div></div>
+			<div class="el"><span class="el-tag">&lt;caption&gt;</span><div class="el-body"><table class="data-table"><caption>Caption</caption><tbody><tr><td>Cell</td></tr></tbody></table></div></div>
+			<div class="el"><span class="el-tag">&lt;thead&gt;</span><div class="el-body"><table class="data-table"><thead><tr><th>Head</th></tr></thead></table></div></div>
+			<div class="el"><span class="el-tag">&lt;tbody&gt;</span><div class="el-body"><table class="data-table"><tbody><tr><td>Body</td></tr></tbody></table></div></div>
+			<div class="el"><span class="el-tag">&lt;tfoot&gt;</span><div class="el-body"><table class="data-table"><tfoot><tr><td>Foot</td></tr></tfoot></table></div></div>
+			<div class="el"><span class="el-tag">&lt;th&gt;</span><div class="el-body"><table class="data-table"><tbody><tr><th>Header cell</th></tr></tbody></table></div></div>
+			<div class="el"><span class="el-tag">&lt;td&gt;</span><div class="el-body"><table class="data-table"><tbody><tr><td>Data cell</td></tr></tbody></table></div></div>
+		</div>
+	</section>
+
+	<section class="section">
+		<div class="section-header">
+			<h2 class="section-title">Data table</h2>
+			<p class="section-desc">Line-separated rows, mono uppercase headers, hover highlight.</p>
+		</div>
+		<table class="data-table">
+			<thead>
+				<tr><th>Token</th><th>Value</th><th>Use</th></tr>
+			</thead>
+			<tbody>
+				<tr><td><code>--black</code></td><td>#000000</td><td>Text, lines, accents</td></tr>
+				<tr><td><code>--white</code></td><td>#ffffff</td><td>Surfaces</td></tr>
+				<tr><td><code>--off-white</code></td><td>#f5f5f5</td><td>Cards, code blocks</td></tr>
+				<tr><td><code>--light-gray</code></td><td>#e5e5e5</td><td>Borders, rules</td></tr>
+				<tr><td><code>--medium-gray</code></td><td>#4a4a4a</td><td>Secondary text</td></tr>
+			</tbody>
+		</table>
+	</section>
+
+	<section class="section">
+		<div class="section-header">
+			<h2 class="section-title">Test areas</h2>
+			<p class="section-desc">Content that mirrors each toolbar function — open the toolbar and watch these blocks react.</p>
+		</div>
+		<div class="test-grid">
+			<div class="test-card">
+				<h3>Motion</h3>
+				<p><span class="motion-dot" aria-hidden="true"></span>This marker pulses continuously. <strong>Pause animations</strong> stops it.</p>
+			</div>
+			<div class="test-card">
+				<h3>Dark surface</h3>
+				<div class="dark-surface">
+					<p>Light text on black. <strong>High contrast</strong> and <strong>dark mode</strong> recompose this block.</p>
+					<p><a href="#controls">A link on dark</a></p>
+				</div>
+			</div>
+			<div class="test-card">
+				<h3>Color perception</h3>
+				<div class="swatches" role="img" aria-label="Color swatches for testing the grayscale mode">
+					<span style="background: #000000"></span>
+					<span style="background: #4a4a4a"></span>
+					<span style="background: #e5e5e5"></span>
+					<span style="background: #b91c1c"></span>
+					<span style="background: #0a7d55"></span>
+					<span style="background: #1d4ed8"></span>
+				</div>
+				<p class="section-desc" style="margin-top: var(--space-sm); margin-bottom: 0;">Six swatches — <strong>Remove colors</strong> shows their grayscale equivalence.</p>
+			</div>
+			<div class="test-card">
+				<h3>Reading comfort</h3>
+				<p>Longer copy exercises <strong>letter spacing</strong>, <strong>line height</strong>, the <strong>reading guide</strong> and the <strong>dyslexia-friendly font</strong>.</p>
+				<p>The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs. Sphinx of black quartz, judge my vow — pangrams keep every letter visible while spacing changes.</p>
+			</div>
+			<div class="test-card">
+				<h3>Keyboard focus</h3>
+				<p>Tab through the controls — <strong>Strong focus outline</strong> makes the focus target unmistakable.</p>
+				<p><button type="button">First control</button> <button type="button">Second control</button> <a href="#controls">and a link</a></p>
+			</div>
+			<div class="test-card">
+				<h3>Links &amp; headings</h3>
+				<p>Use <a href="#content">a body link</a> and the section headings above with <strong>Underline links</strong>, <strong>Highlight links</strong> and <strong>Highlight headings</strong>. <strong>Big cursor</strong> applies to the whole page.</p>
+			</div>
+		</div>
+	</section>
+
+	<section class="section" id="controls">
+		<div class="section-header">
+			<h2 class="section-title">Native form controls</h2>
+			<p class="section-desc">
+				Every browser-native input is overridden by the white-label CSS
+				(<code>globals.css</code>): square corners, 1px black outline,
+				white surfaces, mono uppercase labels — no native browser chrome.
+			</p>
+		</div>
+
+		<div class="form-grid">
+			<div class="field"><label for="wl-text">Text</label><input id="wl-text" type="text" placeholder="Placeholder"></div>
+			<div class="field"><label for="wl-email">Email</label><input id="wl-email" type="email" placeholder="name@example.org"></div>
+			<div class="field"><label for="wl-password">Password</label><input id="wl-password" type="password" value="secret"></div>
+			<div class="field"><label for="wl-search">Search</label><input id="wl-search" type="search" value="query"></div>
+			<div class="field"><label for="wl-url">URL</label><input id="wl-url" type="url" placeholder="https://"></div>
+			<div class="field"><label for="wl-tel">Telephone</label><input id="wl-tel" type="tel" placeholder="+49"></div>
+			<div class="field"><label for="wl-number">Number</label><input id="wl-number" type="number" value="12"></div>
+			<div class="field"><label for="wl-date">Date</label><input id="wl-date" type="date" value="2026-10-09"></div>
+			<div class="field"><label for="wl-time">Time</label><input id="wl-time" type="time" value="12:30"></div>
+			<div class="field"><label for="wl-month">Month</label><input id="wl-month" type="month" value="2026-10"></div>
+			<div class="field"><label for="wl-week">Week</label><input id="wl-week" type="week" value="2026-W41"></div>
+			<div class="field"><label for="wl-datetime">Date &amp; time</label><input id="wl-datetime" type="datetime-local" value="2026-10-09T12:30"></div>
+			<div class="field">
+				<label for="wl-select">Select</label>
+				<select id="wl-select">
+					<option>First option</option>
+					<option>Second option</option>
+					<optgroup label="Group">
+						<option>Grouped option</option>
+					</optgroup>
+				</select>
+			</div>
+			<div class="field"><label for="wl-color">Color</label><input id="wl-color" type="color" value="#000000"></div>
+			<div class="field"><label for="wl-file">File</label><input id="wl-file" type="file"></div>
+			<div class="field"><label for="wl-range">Range</label><input id="wl-range" type="range" min="0" max="100" value="60"></div>
+			<div class="field field--wide"><label for="wl-textarea">Textarea</label><textarea id="wl-textarea" rows="3" placeholder="Message"></textarea></div>
+			<div class="field"><label for="wl-disabled">Disabled</label><input id="wl-disabled" type="text" value="Disabled" disabled></div>
+			<div class="field"><label for="wl-progress">Progress</label><progress id="wl-progress" max="100" value="70"></progress></div>
+			<div class="field"><label for="wl-meter">Meter</label><meter id="wl-meter" min="0" max="100" value="40" low="30" high="70" optimum="80"></meter></div>
+		</div>
+
+		<fieldset style="margin-top: var(--space-xl);">
+			<legend>Checkbox / radio</legend>
+			<div class="checks">
+				<div class="check"><input type="checkbox" id="wl-c1" checked><label for="wl-c1">Checked</label></div>
+				<div class="check"><input type="checkbox" id="wl-c2"><label for="wl-c2">Unchecked</label></div>
+				<div class="check"><input type="checkbox" id="wl-c3" disabled><label for="wl-c3">Disabled</label></div>
+				<div class="check"><input type="radio" name="wl-radio" id="wl-r1" checked><label for="wl-r1">Selected</label></div>
+				<div class="check"><input type="radio" name="wl-radio" id="wl-r2"><label for="wl-r2">Unselected</label></div>
+			</div>
+		</fieldset>
+
+		<div class="inline-actions">
+			<button type="button">Button</button>
+			<button type="submit">Submit</button>
+			<button type="reset">Reset</button>
+			<input type="submit" value="Input submit">
+			<input type="button" value="Input button">
+		</div>
+	</section>
+
+	<section class="section" id="toolbar">
+		<div class="section-header">
+			<h2 class="section-title">Accessibility toolbar</h2>
+			<p class="section-desc">
+				The trigger is themed by <code>whitelabel.css</code> — black on white,
+				1px outline, no offset shadow — while the tool keeps its bundled
+				<strong>Alliance No.1</strong> font. Open it and run the 13 modes
+				against the controls above.
+			</p>
+		</div>
+		<p class="section-desc">
+			Load order: <code>globals.css</code> → <code>a11y-toolbar.css</code> →
+			<code>whitelabel.css</code> → <code>a11y-toolbar.js</code>.
+		</p>
+	</section>
+
+</main>
+
+<!-- Config playground -->
+<button class="cfg-toggle" id="cfg-toggle" type="button" aria-expanded="false" aria-controls="cfg-panel">Customize</button>
+
+<aside class="cfg-panel" id="cfg-panel" aria-label="Toolbar configuration">
+	<h2>Toolbar customizer</h2>
+	<p class="cfg-note">Change values and press <strong>Apply</strong> — the toolbar restarts with the new configuration.</p>
+
+	<h3>Colors</h3>
+	<div class="cfg-row"><label for="c-accent">Accent</label><input type="color" id="c-accent" value="#000000"></div>
+	<div class="cfg-row"><label for="c-surface">Surface</label><input type="color" id="c-surface" value="#ffffff"></div>
+	<div class="cfg-row"><label for="c-text">Text</label><input type="color" id="c-text" value="#000000"></div>
+	<div class="cfg-row"><label for="c-border">Border</label><input type="color" id="c-border" value="#e5e5e5"></div>
+	<div class="cfg-row"><label for="c-highlight">Highlight</label><input type="color" id="c-highlight" value="#000000"></div>
+
+	<h3>Fonts</h3>
+	<div class="cfg-row">
+		<label for="c-font-ui">UI font</label>
+		<select id="c-font-ui">
+			<option value="'Alliance No.1', system-ui, sans-serif" selected>Alliance No.1 (brand)</option>
+			<option value="">System (default stack)</option>
+			<option value="Georgia, 'Times New Roman', serif">Serif</option>
+			<option value="'Courier New', ui-monospace, monospace">Monospace</option>
+			<option value="'OpenDyslexic', sans-serif">OpenDyslexic</option>
+		</select>
+	</div>
+	<div class="cfg-row"><label for="c-font-dyslexia">Dyslexia font</label><input type="text" id="c-font-dyslexia" placeholder="'OpenDyslexic', sans-serif"></div>
+
+	<h3>Behavior</h3>
+	<div class="cfg-row">
+		<label for="c-position">Position</label>
+		<select id="c-position"><option value="left" selected>Left</option><option value="right">Right</option></select>
+	</div>
+	<div class="cfg-row">
+		<label for="c-language">Language</label>
+		<select id="c-language"><option value="en" selected>English</option><option value="de">Deutsch</option></select>
+	</div>
+	<div class="cfg-row">
+		<label for="c-credit">Show credit</label>
+		<input type="checkbox" id="c-credit">
+	</div>
+	<div class="cfg-row"><label for="c-credit-name">Credit name</label><input type="text" id="c-credit-name" placeholder="Your Organization"></div>
+
+	<h3>Tools</h3>
+	<div class="cfg-checks" id="c-toggles"></div>
+
+	<div class="cfg-actions">
+		<button class="primary" id="cfg-apply" type="button">Apply</button>
+		<button id="cfg-reset" type="button">Reset</button>
+	</div>
+	<pre class="cfg-json" id="cfg-json" aria-label="Current configuration"></pre>
+</aside>
+
+<script>
+(function () {
+	'use strict';
+
+	var TOGGLE_IDS = ['contrast','invert','grayscale','underlineLinks','highlightLinks','highlightHeadings','letterSpacing','lineHeight','focusRing','bigCursor','readingGuide','pauseAnimations','dyslexiaFont'];
+
+	var LABELS_EN = {
+		open: 'Open accessibility', triggerText: 'Accessibility', title: 'Accessibility', close: 'Close',
+		fontSize: 'Font size', fontDecrease: 'Decrease font size', fontIncrease: 'Increase font size',
+		reset: 'Reset', resetAria: 'Reset all settings', credit: 'Developed by',
+		toggles: {
+			contrast: 'High contrast', invert: 'Dark mode', grayscale: 'Remove colors',
+			underlineLinks: 'Underline links', highlightLinks: 'Highlight links', highlightHeadings: 'Highlight headings',
+			letterSpacing: 'More letter spacing', lineHeight: 'More line height', focusRing: 'Strong focus outline',
+			bigCursor: 'Big cursor', readingGuide: 'Reading guide', pauseAnimations: 'Pause animations',
+			dyslexiaFont: 'Dyslexia-friendly font'
+		}
+	};
+	var LABELS_DE = {
+		open: 'Barrierefreiheit öffnen', triggerText: 'Barrierefreiheit', title: 'Barrierefreiheit', close: 'Schließen',
+		fontSize: 'Schriftgröße', fontDecrease: 'Schrift verkleinern', fontIncrease: 'Schrift vergrößern',
+		reset: 'Zurücksetzen', resetAria: 'Alle Einstellungen zurücksetzen', credit: 'Entwickelt von',
+		toggles: {
+			contrast: 'Hoher Kontrast', invert: 'Dunkles Design', grayscale: 'Farben entfernen',
+			underlineLinks: 'Links unterstreichen', highlightLinks: 'Links hervorheben', highlightHeadings: 'Überschriften markieren',
+			letterSpacing: 'Mehr Buchstabenabstand', lineHeight: 'Größerer Zeilenabstand', focusRing: 'Deutlicher Fokusrahmen',
+			bigCursor: 'Große Mauszeiger', readingGuide: 'Lesehilfe (Zeilenmarker)', pauseAnimations: 'Animationen stoppen',
+			dyslexiaFont: 'Dyslexie-freundliche Schrift'
+		}
+	};
+	var TOGGLE_LABELS = {
+		contrast: 'Contrast', invert: 'Dark mode', grayscale: 'Grayscale', underlineLinks: 'Underline links',
+		highlightLinks: 'Highlight links', highlightHeadings: 'Headings', letterSpacing: 'Letter spacing',
+		lineHeight: 'Line height', focusRing: 'Focus ring', bigCursor: 'Big cursor',
+		readingGuide: 'Reading guide', pauseAnimations: 'Animations', dyslexiaFont: 'Dyslexia font'
+	};
+
+	var panel = document.getElementById('cfg-panel');
+	var toggleBtn = document.getElementById('cfg-toggle');
+	var jsonOut = document.getElementById('cfg-json');
+	var togglesWrap = document.getElementById('c-toggles');
+
+	TOGGLE_IDS.forEach(function (id) {
+		var label = document.createElement('label');
+		var input = document.createElement('input');
+		input.type = 'checkbox';
+		input.checked = true;
+		input.dataset.toggleId = id;
+		label.appendChild(input);
+		label.appendChild(document.createTextNode(TOGGLE_LABELS[id]));
+		togglesWrap.appendChild(label);
+	});
+
+	toggleBtn.addEventListener('click', function () {
+		var open = panel.classList.toggle('is-open');
+		toggleBtn.setAttribute('aria-expanded', String(open));
+	});
+
+	function val(id) { return document.getElementById(id).value; }
+	function checked(id) { return document.getElementById(id).checked; }
+
+	function buildConfig() {
+		var lang = val('c-language');
+		var enabledToggles = TOGGLE_IDS.filter(function (id) {
+			return togglesWrap.querySelector('input[data-toggle-id="' + id + '"]').checked;
+		});
+
+		var config = {
+			position: val('c-position'),
+			toggles: enabledToggles,
+			labels: lang === 'de' ? LABELS_DE : LABELS_EN,
+			colors: {
+				accent: val('c-accent'),
+				surface: val('c-surface'),
+				text: val('c-text'),
+				border: val('c-border'),
+				highlight: val('c-highlight')
+			},
+			credit: checked('c-credit') ? {
+				text: lang === 'de' ? 'Entwickelt von' : 'Developed by',
+				name: val('c-credit-name') || 'Your Organization',
+				url: 'https://example.org'
+			} : false
+		};
+
+		var uiFont = val('c-font-ui');
+		var dyslexiaFont = val('c-font-dyslexia').trim();
+		config.fonts = {};
+		if (uiFont) config.fonts.ui = uiFont;
+		if (dyslexiaFont) config.fonts.dyslexia = dyslexiaFont;
+
+		return config;
+	}
+
+	function applyConfig() {
+		var config = buildConfig();
+		jsonOut.textContent = JSON.stringify(config, null, 2);
+		if (!window.A11yToolbar) return;
+		window.A11yToolbar.destroy();
+		window.A11yToolbar.init(config);
+	}
+
+	document.getElementById('cfg-apply').addEventListener('click', applyConfig);
+	document.getElementById('cfg-reset').addEventListener('click', function () {
+		try { localStorage.removeItem('a11y_toolbar_prefs'); } catch (e) {}
+		location.reload();
+	});
+
+	window.addEventListener('DOMContentLoaded', function () {
+		setTimeout(function () {
+			jsonOut.textContent = JSON.stringify(buildConfig(), null, 2);
+		}, 0);
+	});
+})();
+</script>
+
+</body>
+</html>

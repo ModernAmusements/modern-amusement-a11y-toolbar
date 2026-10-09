@@ -1,0 +1,124 @@
+/* ==========================================================================
+   Modern Amusement Accessibility Toolbar — white-label default theme
+   ==========================================================================
+   Neutral black & white theme derived from the white-label design system in
+   this repository's root (globals.css): 1px hard lines, square corners,
+   monochrome palette, no offset shadows.
+
+   Typography stays with the toolbar: the bundled Alliance No.1 brand font is
+   kept for the tool itself, so host-page button/label styles cannot leak in.
+   Only the palette and geometry are themed.
+
+   Usage — load after a11y-toolbar.css:
+
+     <link rel="stylesheet" href="globals.css">      host design tokens
+     <link rel="stylesheet" href="a11y-toolbar.css"> toolbar base
+     <link rel="stylesheet" href="whitelabel.css">   this file (optional)
+
+   Everything is plain CSS custom properties — re-brand by overriding the
+   variables again in your own stylesheet or via the JS config.
+   ========================================================================== */
+
+:root {
+	/* Palette — black / white / grays from globals.css */
+	--a11y-accent: #000000;
+	--a11y-accent-text: #ffffff;
+	--a11y-surface: #ffffff;
+	--a11y-surface-hover: #f5f5f5;
+	--a11y-text: #000000;
+	--a11y-text-muted: #4a4a4a;
+	--a11y-border: #e5e5e5;
+	--a11y-focus: #000000;
+
+	/* Monochrome highlights */
+	--a11y-highlight: #000000;
+	--a11y-highlight-text: #ffffff;
+	--a11y-reading-guide: #000000;
+	--a11y-reading-guide-bg: rgba(0, 0, 0, 0.08);
+
+	/* High-contrast mode stays black on white, links underlined */
+	--a11y-contrast-bg: #ffffff;
+	--a11y-contrast-text: #000000;
+	--a11y-contrast-link: #000000;
+	--a11y-contrast-link-hover: #4a4a4a;
+
+	/* Square geometry */
+	--a11y-radius: 0;
+	--a11y-radius-sm: 0;
+
+	/* One typeface only — Alliance No.1, also for the mono value readout */
+	--a11y-font-ui: 'Alliance No.1', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	--a11y-font-mono: var(--a11y-font-ui);
+}
+
+/* --------------------------------------------------------------------------
+   Panel + trigger — 1px wireframe outline, no offset shadows
+   -------------------------------------------------------------------------- */
+
+.a11y-toolbar,
+.a11y-trigger {
+	border-width: 1px;
+	box-shadow: none;
+}
+
+.a11y-trigger:hover,
+.a11y-trigger:focus-visible {
+	box-shadow: none;
+	transform: none;
+}
+
+/* Keep the bundled Alliance No.1 on every tool control — generic host-page
+   button rules (font, uppercase, letter-spacing) must not reach the tool. */
+.a11y-trigger,
+.a11y-toolbar button {
+	font-family: var(--a11y-font-ui);
+	text-transform: none;
+}
+
+.a11y-header {
+	border-bottom-width: 1px;
+}
+
+.a11y-badge {
+	border-radius: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Controls — flat 1px outlines, no offset press effect
+   -------------------------------------------------------------------------- */
+
+.a11y-btn-sm,
+.a11y-reset-btn {
+	border-width: 1px;
+	box-shadow: none;
+}
+
+.a11y-btn-sm {
+	padding: 0;
+}
+
+.a11y-btn-sm:active,
+.a11y-reset-btn:active {
+	transform: none;
+}
+
+.a11y-font-val {
+	border-left: none;
+	border-right: none;
+	margin: 0;
+}
+
+.a11y-toggle-btn {
+	border-bottom-width: 1px;
+	border-left-width: 3px;
+}
+
+.a11y-group--bordered {
+	border-top-width: 1px;
+}
+
+@media (max-width: 768px) {
+	.a11y-drag-handle {
+		border-radius: 0;
+	}
+}

@@ -3,6 +3,22 @@
 All notable changes to this project are documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.3.0] — 2026-10-09
+
+### Added
+- **White-label default theme** `whitelabel.css`: neutral black/white/gray palette, 1px wireframe outlines, no offset shadows, square badge, monochrome highlights — load after `a11y-toolbar.css`. The tool keeps its bundled **Alliance No.1** font; generic host-page button typography cannot leak into the panel.
+- White-label design system `globals.css` (root) with a full **native form-control layer**: every browser input type and control (text/search/number, date/time family, color, file, range, checkbox, radio, select, textarea, buttons, fieldset, progress, meter) restyled via `:where()` (specificity 0) including WebKit/Firefox pseudo-elements (calendar picker, file picker, spinners, search cancel, slider track/thumb, color swatches), disabled/checked/focus states and autofill. Date/time inputs keep their native picker affordance; `appearance: none` is deliberately not applied there.
+- Content-element base typography and layout (headings, copy, links, lists, quotes, code, table, figures, `details/summary`, `address`, `hgroup`, `menu`, `dialog`, `canvas`, `iframe`, embedded media).
+- New `demo/whitelabel.html`: logo + wordmark header, hero, stats grid, test areas mirroring every toolbar mode (motion, dark surface, color swatches, reading comfort, keyboard focus, links/headings), a **30 + 50 = 80-element inventory**, native control gallery and the live config playground.
+- Self-hosted `@font-face` for Alliance No.1 in `globals.css` — the white-label demo makes no Google Fonts request.
+
+### Changed
+- `package.json` ships `whitelabel.css`.
+- README documents the white-label theme (EN/DE).
+
+### Fixed
+- `.a11y-btn-sm` keeps a full content box under host-page button padding (explicit `padding: 0` in the white-label theme).
+
 ## [1.2.1] — 2026-10-09
 
 ### Changed

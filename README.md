@@ -155,6 +155,8 @@ The shipped default theme follows the Modern Amusement design tokens (Bielefeld)
 
 Everything above is overridable per integration via the `colors`/`fonts` options or the CSS variables.
 
+A neutral **white-label theme** ships as `whitelabel.css` (black/white/gray, 1px lines, no offset shadows, Alliance No.1 only). Load it after `a11y-toolbar.css` — see `demo/whitelabel.html`, which also contains an 80-element content inventory and the live config playground.
+
 ## Labels / i18n
 
 All strings are configurable. Defaults are English; the full set:
@@ -399,6 +401,8 @@ Das ausgelieferte Standard-Theme folgt den Modern-Amusement-Design-Tokens (Biele
 - **Abstands-Rhythmus:** 4/8/12/16/20/24/32/48.
 
 Alles oben ist pro Integration über `colors`/`fonts` oder die CSS-Variablen übersteuerbar.
+
+Ein neutrales **White-Label-Theme** liegt als `whitelabel.css` bei (Schwarz/Weiß/Grau, 1px-Linien, keine Offset-Schatten, ausschließlich Alliance No.1). Nach `a11y-toolbar.css` laden — siehe `demo/whitelabel.html` mit 80-Elemente-Inventar und Live-Config-Playground.
 
 ### Beschriftungen / i18n
 
