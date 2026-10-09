@@ -47,3 +47,5 @@ CHROME_PATH=... npm test # falls Chrome nicht automatisch gefunden wird
 ## Agents
 
 Lokale OpenCode-Agents liegen in `.opencode/agents/` (kopiert aus dem Modern-Amusement-Pool, u. a. `webdev-expert`, `accessibility-auditor`, `wcag-auditor`, `qa-tester`, `ux-designer`, `performance-engineer`, `security-hardener`) und sind über `opencode.json` registriert. Sie sind **gitignored** (`.opencode/`) — nie committen, nur lokal verwenden. Falls die prompt-Registrierung neu gesetzt werden muss: `opencode.json` zeigt auf `{file:.opencode/agents/<name>.md}`.
+
+**Ausnahme:** `agents/credentials-agent.md` ist bewusst **getrackt** (kein gitignore) und in `opencode.json` registriert. Der Agent enthält **keine Secrets**, nur Regeln und Credential-Orte (npm `~/.npmrc`, gh-Keyring, Vercel-Projektlink). Er verwaltet Auth/Publishing (npm-Publish-Runbook, 2FA/Token-Hygiene, Rotations-Regeln) und darf niemals Werte in dieses public Repo schreiben.
